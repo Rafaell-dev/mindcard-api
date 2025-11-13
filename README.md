@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/NestJS-11.0.1-E0234E?style=for-the-badge&logo=nestjs" alt="NestJS" />
   <img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Prisma-6.19.0-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
 </p>
 
 <p align="center">
@@ -39,7 +39,7 @@
 | **NestJS** | 11.0.1 | Framework backend |
 | **TypeScript** | 5.0+ | Linguagem principal |
 | **Prisma ORM** | 6.19.0 | ORM para PostgreSQL |
-| **PostgreSQL** | 16+ | Banco de dados |
+| **PostgreSQL** | 18+ | Banco de dados |
 | **Google Gemini AI** | 1.5-flash-latest | IA para geração de conteúdo |
 | **Cloudflare R2** | - | Armazenamento de arquivos |
 | **Axios** | - | Cliente HTTP para File API |
@@ -72,7 +72,7 @@
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/mindcard-api.git
+git clone https://github.com/rafaell-dev/mindcard-api.git
 cd mindcard-api
 
 # Instale as dependências
@@ -504,15 +504,6 @@ HOST=0.0.0.0
 PORT=3002
 DATABASE_URL=postgresql://...  # Use connection pooling (Supabase, Neon, etc)
 ```
-
-### Plataformas Recomendadas
-
-- **Railway**: Deploy automático via Git
-- **Render**: Free tier disponível
-- **AWS ECS**: Escalável com Fargate
-- **Google Cloud Run**: Serverless
-- **Heroku**: Fácil deploy
-
 ---
 
 ## 📊 Monitoramento
@@ -563,7 +554,7 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 
 ## 👥 Autores
 
-- **Sua Equipe** - *Desenvolvimento inicial*
+- **Sua Equipe** - *Rafael Araujo*
 
 ---
 
