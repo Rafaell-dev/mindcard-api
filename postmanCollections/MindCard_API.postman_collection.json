@@ -1,0 +1,811 @@
+{
+	"info": {
+		"_postman_id": "mindcard-api-2025",
+		"name": "MindCard API",
+		"description": "Collection completa da API MindCard - Plataforma educacional com geração de flashcards e quizzes por IA.\n\n## Recursos Principais\n\n- **Usuários**: Cadastro e gerenciamento de usuários\n- **Mindcards**: Criação de conjuntos de estudo com IA (Gemini)\n- **Cards**: Flashcards e questões de múltipla escolha\n\n## Variáveis de Ambiente\n\n- `baseUrl`: URL base da API (padrão: http://localhost:3002/api/v1)\n- `usuarioId`: ID do usuário autenticado\n- `mindcardId`: ID do mindcard atual\n- `cardId`: ID do card atual\n\n## Tecnologias\n\n- NestJS 11.0.1\n- Google Gemini AI (1.5-flash-latest)\n- Cloudflare R2 Storage\n- PostgreSQL + Prisma ORM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "👤 Usuários",
+			"item": [
+				{
+					"name": "Cadastrar Usuário",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('usuarioId', response.id);",
+									"    pm.test('Usuário criado com sucesso', () => {",
+									"        pm.expect(response).to.have.property('id');",
+									"        pm.expect(response).to.have.property('email');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"senha\": \"senha123\",\n  \"faculdade\": \"Universidade Federal\",\n  \"idioma\": \"pt-BR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuario/cadastrar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"usuario",
+								"cadastrar"
+							]
+						},
+						"description": "Cria um novo usuário no sistema.\n\n**Campos obrigatórios:**\n- `email`: Email válido do usuário\n- `nome`: Nome completo\n- `senha`: Senha de acesso\n\n**Campos opcionais:**\n- `faculdade`: Nome da instituição de ensino\n- `idioma`: Idioma preferido (ex: pt-BR, en-US)\n\n**Resposta de sucesso:** 200/201\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"faculdade\": \"Universidade Federal\",\n  \"idioma\": \"pt-BR\",\n  \"dataRegistro\": \"2025-11-13T00:00:00.000Z\",\n  \"xpTotal\": 0,\n  \"sequenciaAtual\": 0,\n  \"sequenciaRecorde\": 0\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Usuário Criado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"maria.santos@example.com\",\n  \"nome\": \"Maria Santos\",\n  \"senha\": \"senha456\",\n  \"faculdade\": \"USP\",\n  \"idioma\": \"pt-BR\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuario/cadastrar",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuario",
+										"cadastrar"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"01JCQR5H8K9M0N1P2Q3R4S5T6U\",\n  \"email\": \"maria.santos@example.com\",\n  \"nome\": \"Maria Santos\",\n  \"faculdade\": \"USP\",\n  \"idioma\": \"pt-BR\",\n  \"dataRegistro\": \"2025-11-13T12:30:00.000Z\",\n  \"xpTotal\": 0,\n  \"sequenciaAtual\": 0,\n  \"sequenciaRecorde\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Usuário por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuario/listar/:userId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"usuario",
+								"listar",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{usuarioId}}",
+									"description": "ID do usuário"
+								}
+							]
+						},
+						"description": "Busca os dados de um usuário específico pelo ID.\n\n**Parâmetros de rota:**\n- `userId`: ID único do usuário\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"usuario@example.com\",\n  \"nome\": \"Nome do Usuário\",\n  \"faculdade\": \"Instituição\",\n  \"idioma\": \"pt-BR\",\n  \"dataRegistro\": \"2025-11-13T00:00:00.000Z\",\n  \"xpTotal\": 150,\n  \"sequenciaAtual\": 5,\n  \"sequenciaRecorde\": 12\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Usuário por Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuario/listar_por_email/:email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"usuario",
+								"listar_por_email",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": "joao.silva@example.com",
+									"description": "Email do usuário"
+								}
+							]
+						},
+						"description": "Busca os dados de um usuário pelo email cadastrado.\n\n**Parâmetros de rota:**\n- `email`: Email do usuário\n\n**Resposta:** Mesma estrutura do endpoint de busca por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Usuário",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva Santos\",\n  \"faculdade\": \"Universidade de São Paulo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuario/atualizar/:userId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"usuario",
+								"atualizar",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{usuarioId}}",
+									"description": "ID do usuário"
+								}
+							]
+						},
+						"description": "Atualiza dados parciais de um usuário.\n\n**Parâmetros de rota:**\n- `userId`: ID do usuário\n\n**Campos atualizáveis (todos opcionais):**\n- `email`: Novo email\n- `nome`: Novo nome\n- `senha`: Nova senha\n- `faculdade`: Nova instituição\n\n**Resposta:** Dados atualizados do usuário"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de usuários da plataforma MindCard.\n\nPermite criar, buscar e atualizar informações de usuários."
+		},
+		{
+			"name": "🧠 Mindcards",
+			"item": [
+				{
+					"name": "Criar Mindcard com IA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('mindcardId', response.mindcard.id);",
+									"    pm.test('Mindcard criado com sucesso', () => {",
+									"        pm.expect(response).to.have.property('mindcard');",
+									"        pm.expect(response).to.have.property('totalCardsGenerated');",
+									"        pm.expect(response.totalCardsGenerated).to.be.greaterThan(0);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "titulo",
+									"value": "Biologia - Fotossíntese",
+									"description": "Título do mindcard",
+									"type": "text"
+								},
+								{
+									"key": "usuarioId",
+									"value": "{{usuarioId}}",
+									"description": "ID do usuário proprietário",
+									"type": "text"
+								},
+								{
+									"key": "tipoGeracao",
+									"value": "FLASHCARDS",
+									"description": "FLASHCARDS ou QUIZ",
+									"type": "text"
+								},
+								{
+									"key": "promptPersonalizado",
+									"value": "Foque em conceitos básicos e fáceis de memorizar",
+									"description": "Instrução customizada para a IA (opcional)",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "fonteArquivo",
+									"description": "PDF ou imagem (até 2GB)",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mindcard/criar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mindcard",
+								"criar"
+							]
+						},
+						"description": "Cria um mindcard e gera automaticamente flashcards ou questões usando Google Gemini AI.\n\n**🤖 Processo de IA:**\n1. Upload do arquivo para Cloudflare R2\n2. Processamento com Gemini AI (15 flashcards ou 10 questões)\n3. Criação automática dos cards no banco\n\n**📤 Upload de Arquivos:**\n- ≤ 20MB: Upload inline (10-15s)\n- \\> 20MB: Gemini File API automática (30-180s)\n- Máximo: 2GB\n\n**Campos obrigatórios:**\n- `titulo`: Título descritivo\n- `usuarioId`: ID do usuário\n- `tipoGeracao`: \"FLASHCARDS\" ou \"QUIZ\"\n- `fonteArquivo`: Arquivo PDF ou imagem\n\n**Campo opcional:**\n- `promptPersonalizado`: Instruções customizadas para a IA\n\n**Resposta de sucesso:** 200/201\n```json\n{\n  \"mindcard\": {\n    \"id\": \"01JCQR...\",\n    \"titulo\": \"Biologia - Fotossíntese\",\n    \"fonteArquivo\": \"https://r2-url.com/...\",\n    \"usuarioId\": \"user-123\",\n    \"dataCriacao\": \"2025-11-13T00:00:00.000Z\"\n  },\n  \"totalCardsGenerated\": 15\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Flashcards Gerados",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "titulo",
+											"value": "Química Orgânica - Capítulo 1",
+											"type": "text"
+										},
+										{
+											"key": "usuarioId",
+											"value": "01JCQR5H8K9M0N1P2Q3R4S5T6U",
+											"type": "text"
+										},
+										{
+											"key": "tipoGeracao",
+											"value": "FLASHCARDS",
+											"type": "text"
+										},
+										{
+											"key": "fonteArquivo",
+											"type": "file",
+											"src": "/path/to/file.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/mindcard/criar",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"mindcard",
+										"criar"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"mindcard\": {\n    \"id\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\",\n    \"titulo\": \"Química Orgânica - Capítulo 1\",\n    \"fonteArquivo\": \"https://pub-123.r2.dev/mindcards/user_mindcard.pdf\",\n    \"promptPersonalizado\": null,\n    \"usuarioId\": \"01JCQR5H8K9M0N1P2Q3R4S5T6U\",\n    \"dataCriacao\": \"2025-11-13T14:20:00.000Z\"\n  },\n  \"totalCardsGenerated\": 15\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Mindcard por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mindcard/listar/:mindcardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mindcard",
+								"listar",
+								":mindcardId"
+							],
+							"variable": [
+								{
+									"key": "mindcardId",
+									"value": "{{mindcardId}}",
+									"description": "ID do mindcard"
+								}
+							]
+						},
+						"description": "Busca os dados de um mindcard específico.\n\n**Parâmetros de rota:**\n- `mindcardId`: ID único do mindcard\n\n**Resposta:** Dados completos do mindcard (sem os cards)"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Mindcards por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mindcard/listar_por_usuario/:usuarioId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mindcard",
+								"listar_por_usuario",
+								":usuarioId"
+							],
+							"variable": [
+								{
+									"key": "usuarioId",
+									"value": "{{usuarioId}}",
+									"description": "ID do usuário"
+								}
+							]
+						},
+						"description": "Lista todos os mindcards criados por um usuário.\n\n**Parâmetros de rota:**\n- `usuarioId`: ID do usuário\n\n**Resposta:** Array de mindcards"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Mindcard",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "titulo",
+									"value": "Biologia - Fotossíntese (Atualizado)",
+									"description": "Novo título",
+									"type": "text"
+								},
+								{
+									"key": "promptPersonalizado",
+									"value": "Incluir exemplos práticos",
+									"description": "Novo prompt personalizado",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "fonteArquivo",
+									"description": "Novo arquivo fonte (opcional)",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mindcard/atualizar/:mindcardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mindcard",
+								"atualizar",
+								":mindcardId"
+							],
+							"variable": [
+								{
+									"key": "mindcardId",
+									"value": "{{mindcardId}}",
+									"description": "ID do mindcard"
+								}
+							]
+						},
+						"description": "Atualiza dados de um mindcard existente.\n\n**Parâmetros de rota:**\n- `mindcardId`: ID do mindcard\n\n**Campos atualizáveis (todos opcionais):**\n- `titulo`: Novo título\n- `promptPersonalizado`: Novo prompt\n- `fonteArquivo`: Novo arquivo (substitui o anterior no R2)\n\n**Nota:** Atualizar o arquivo NÃO regenera os cards automaticamente."
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar Mindcard",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mindcard/deletar/:mindcardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mindcard",
+								"deletar",
+								":mindcardId"
+							],
+							"variable": [
+								{
+									"key": "mindcardId",
+									"value": "{{mindcardId}}",
+									"description": "ID do mindcard"
+								}
+							]
+						},
+						"description": "Remove um mindcard do sistema.\n\n**Parâmetros de rota:**\n- `mindcardId`: ID do mindcard\n\n**⚠️ Atenção:** Esta ação é irreversível e remove também todos os cards associados.\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"message\": \"Mindcard deletado com sucesso\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de Mindcards.\n\nMindcards são conjuntos de estudo que contêm flashcards ou questões geradas automaticamente por IA a partir de documentos PDF ou imagens."
+		},
+		{
+			"name": "📇 Cards",
+			"item": [
+				{
+					"name": "Criar Card Manual",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('cardId', response.id);",
+									"    pm.test('Card criado com sucesso', () => {",
+									"        pm.expect(response).to.have.property('id');",
+									"        pm.expect(response).to.have.property('titulo');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"O que é fotossíntese?\",\n  \"tipo\": \"ABERTA\",\n  \"dificuldade\": \"MEDIO\",\n  \"pergunta\": \"O que é fotossíntese e qual sua importância?\",\n  \"respostaCorreta\": \"Processo pelo qual plantas convertem luz solar em energia química, essencial para a vida na Terra.\",\n  \"mindcardId\": \"{{mindcardId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/card/criar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"card",
+								"criar"
+							]
+						},
+						"description": "Cria um card manualmente (sem usar IA).\n\n**Tipos de Card:**\n- `ABERTA`: Pergunta com resposta dissertativa\n- `MULTIPLA_ESCOLHA`: Quiz com 4 alternativas\n- `ALTERNATIVA`: Verdadeiro/Falso\n\n**Níveis de Dificuldade:**\n- `FACIL`\n- `MEDIO`\n- `DIFICIL`\n\n**Campos obrigatórios:**\n- `titulo`: Título do card\n- `tipo`: Tipo de card (enum)\n- `dificuldade`: Nível (enum)\n- `pergunta`: Texto da pergunta\n- `mindcardId`: ID do mindcard pai\n\n**Campos para MULTIPLA_ESCOLHA:**\n- `respostaCorreta`: Letra da alternativa correta (A, B, C ou D)\n- `alternativaTexto`: Texto das 4 alternativas separadas por \\\\n\n**Campos para ABERTA:**\n- `respostaCorreta`: Resposta esperada\n\n**Exemplo - Quiz:**\n```json\n{\n  \"titulo\": \"Capital do Brasil\",\n  \"tipo\": \"MULTIPLA_ESCOLHA\",\n  \"dificuldade\": \"FACIL\",\n  \"pergunta\": \"Qual é a capital do Brasil?\",\n  \"respostaCorreta\": \"C\",\n  \"alternativaTexto\": \"A. São Paulo\\nB. Rio de Janeiro\\nC. Brasília\\nD. Salvador\",\n  \"mindcardId\": \"01JCQR...\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Card Aberta",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"titulo\": \"Ciclo de Krebs\",\n  \"tipo\": \"ABERTA\",\n  \"dificuldade\": \"DIFICIL\",\n  \"pergunta\": \"Explique o ciclo de Krebs e sua importância no metabolismo celular.\",\n  \"respostaCorreta\": \"O ciclo de Krebs é uma série de reações químicas que ocorre na matriz mitocondrial, essencial para a respiração celular aeróbica. Ele oxida acetil-CoA, produzindo CO2, NADH, FADH2 e ATP.\",\n  \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/card/criar",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"card",
+										"criar"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"01JCQR9A8B7C6D5E4F3G2H1I0J\",\n  \"titulo\": \"Ciclo de Krebs\",\n  \"tipo\": \"ABERTA\",\n  \"dificuldade\": \"DIFICIL\",\n  \"pergunta\": \"Explique o ciclo de Krebs e sua importância no metabolismo celular.\",\n  \"respostaCorreta\": \"O ciclo de Krebs é uma série de reações químicas que ocorre na matriz mitocondrial, essencial para a respiração celular aeróbica. Ele oxida acetil-CoA, produzindo CO2, NADH, FADH2 e ATP.\",\n  \"alternativaTexto\": null,\n  \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n}"
+						},
+						{
+							"name": "Sucesso - Card Quiz",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"titulo\": \"Organelas Celulares\",\n  \"tipo\": \"MULTIPLA_ESCOLHA\",\n  \"dificuldade\": \"MEDIO\",\n  \"pergunta\": \"Qual organela é responsável pela produção de energia na célula?\",\n  \"respostaCorreta\": \"B\",\n  \"alternativaTexto\": \"A. Núcleo\\nB. Mitocôndria\\nC. Ribossomo\\nD. Complexo de Golgi\",\n  \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/card/criar",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"card",
+										"criar"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"01JCQR9K9L8M7N6O5P4Q3R2S1T\",\n  \"titulo\": \"Organelas Celulares\",\n  \"tipo\": \"MULTIPLA_ESCOLHA\",\n  \"dificuldade\": \"MEDIO\",\n  \"pergunta\": \"Qual organela é responsável pela produção de energia na célula?\",\n  \"respostaCorreta\": \"B\",\n  \"alternativaTexto\": \"A. Núcleo\\nB. Mitocôndria\\nC. Ribossomo\\nD. Complexo de Golgi\",\n  \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Card por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/card/listar/:cardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"card",
+								"listar",
+								":cardId"
+							],
+							"variable": [
+								{
+									"key": "cardId",
+									"value": "{{cardId}}",
+									"description": "ID do card"
+								}
+							]
+						},
+						"description": "Busca os dados de um card específico.\n\n**Parâmetros de rota:**\n- `cardId`: ID único do card"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Cards por Mindcard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/card/listar_por_mindcard/:mindcardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"card",
+								"listar_por_mindcard",
+								":mindcardId"
+							],
+							"variable": [
+								{
+									"key": "mindcardId",
+									"value": "{{mindcardId}}",
+									"description": "ID do mindcard"
+								}
+							]
+						},
+						"description": "Lista todos os cards (flashcards/questões) de um mindcard.\n\n**Parâmetros de rota:**\n- `mindcardId`: ID do mindcard\n\n**Resposta:** Array com todos os cards gerados\n\n**Exemplo de uso:** Exibir todos os flashcards para estudo"
+					},
+					"response": [
+						{
+							"name": "Sucesso - Lista de Cards",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/card/listar_por_mindcard/01JCQR7X9Y0Z1A2B3C4D5E6F7G",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"card",
+										"listar_por_mindcard",
+										"01JCQR7X9Y0Z1A2B3C4D5E6F7G"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"01JCQR9A8B7C6D5E4F3G2H1I0J\",\n    \"titulo\": \"Fotossíntese - Definição\",\n    \"tipo\": \"ABERTA\",\n    \"dificuldade\": \"FACIL\",\n    \"pergunta\": \"O que é fotossíntese?\",\n    \"respostaCorreta\": \"Processo de conversão de luz solar em energia química\",\n    \"alternativaTexto\": null,\n    \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n  },\n  {\n    \"id\": \"01JCQR9K9L8M7N6O5P4Q3R2S1T\",\n    \"titulo\": \"Clorofila\",\n    \"tipo\": \"MULTIPLA_ESCOLHA\",\n    \"dificuldade\": \"MEDIO\",\n    \"pergunta\": \"Qual pigmento é responsável pela cor verde das plantas?\",\n    \"respostaCorreta\": \"A\",\n    \"alternativaTexto\": \"A. Clorofila\\nB. Caroteno\\nC. Xantofila\\nD. Antocianina\",\n    \"mindcardId\": \"01JCQR7X9Y0Z1A2B3C4D5E6F7G\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Atualizar Card",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Fotossíntese - Conceito Atualizado\",\n  \"dificuldade\": \"FACIL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/card/atualizar/:cardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"card",
+								"atualizar",
+								":cardId"
+							],
+							"variable": [
+								{
+									"key": "cardId",
+									"value": "{{cardId}}",
+									"description": "ID do card"
+								}
+							]
+						},
+						"description": "Atualiza dados de um card existente.\n\n**Parâmetros de rota:**\n- `cardId`: ID do card\n\n**Campos atualizáveis (todos opcionais):**\n- `titulo`: Novo título\n- `tipo`: Novo tipo (ABERTA, MULTIPLA_ESCOLHA, ALTERNATIVA)\n- `dificuldade`: Nova dificuldade (FACIL, MEDIO, DIFICIL)\n- `pergunta`: Nova pergunta\n- `respostaCorreta`: Nova resposta\n- `alternativaTexto`: Novas alternativas (para quiz)"
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar Card",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/card/deletar/:cardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"card",
+								"deletar",
+								":cardId"
+							],
+							"variable": [
+								{
+									"key": "cardId",
+									"value": "{{cardId}}",
+									"description": "ID do card"
+								}
+							]
+						},
+						"description": "Remove um card do sistema.\n\n**Parâmetros de rota:**\n- `cardId`: ID do card\n\n**Resposta de sucesso:** 204 No Content"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de Cards.\n\nCards podem ser flashcards (perguntas abertas) ou questões de múltipla escolha. Normalmente são gerados automaticamente pela IA ao criar um Mindcard, mas também podem ser criados manualmente."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script global",
+					"// Pode ser usado para adicionar autenticação, logs, etc."
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script global",
+					"pm.test('Status code is success', () => {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3002/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "usuarioId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mindcardId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cardId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
