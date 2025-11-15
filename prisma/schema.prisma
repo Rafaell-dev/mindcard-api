@@ -6,24 +6,23 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
 
 model usuario {
-  id                 String    @id @default(cuid())
-  nome               String
-  usuario            String    @unique
-  email              String    @unique
-  senha              String
-  faculdade          String?
-  idioma             String    @default("pt-BR")
-  data_registro      DateTime  @default(now())
-  xp_total           Int       @default(0)
-  sequencia_atual    Int       @default(0)
-  sequencia_recorde  Int       @default(0)
+  id                String   @id @default(cuid())
+  nome              String
+  usuario           String   @unique
+  email             String   @unique
+  senha             String
+  faculdade         String?
+  idioma            String   @default("pt-BR")
+  data_registro     DateTime @default(now())
+  xp_total          Int      @default(0)
+  sequencia_atual   Int      @default(0)
+  sequencia_recorde Int      @default(0)
 
-  mindcards          mindcard[]
-  praticas           pratica[]
+  mindcards mindcard[]
+  praticas  pratica[]
 
   @@index([email])
   @@index([usuario])
@@ -31,33 +30,40 @@ model usuario {
 }
 
 model mindcard {
-  id                     String     @id @default(cuid())
-  titulo                 String
-  fonte_arquivo          String?
-  prompt_personalizado   String?
-  usuario_id             String
-  data_criacao           DateTime   @default(now())
+  id                   String              @id @default(cuid())
+  titulo               String
+  fonte_arquivo        String?
+  prompt_personalizado String?
+  usuario_id           String
+  data_criacao         DateTime            @default(now())
+  status_processamento StatusProcessamento @default(PENDENTE)
+  job_id               String?             @unique
+  mensagem_erro        String?
+  iniciado_em          DateTime?
+  concluido_em         DateTime?
 
-  usuario                usuario    @relation(fields: [usuario_id], references: [id])
-  cards                  card[]
-  praticas               pratica[]
+  usuario  usuario   @relation(fields: [usuario_id], references: [id])
+  cards    card[]
+  praticas pratica[]
 
   @@index([usuario_id])
   @@index([data_criacao])
+  @@index([status_processamento])
+  @@index([job_id])
 }
 
 model card {
-  id                   String         @id @default(cuid())
-  titulo               String
-  tipo                 tipo_card
-  dificuldade          dificuldade
-  pergunta             String
-  resposta_correta     String?
-  alternativa_texto    String?
-  mindcard_id          String
+  id                String      @id @default(cuid())
+  titulo            String
+  tipo              tipo_card
+  dificuldade       dificuldade
+  pergunta          String
+  resposta_correta  String?
+  alternativa_texto String?
+  mindcard_id       String
 
-  mindcard             mindcard       @relation(fields: [mindcard_id], references: [id])
-  opcoes               opcao_resposta[]
+  mindcard mindcard         @relation(fields: [mindcard_id], references: [id])
+  opcoes   opcao_resposta[]
 
   @@index([mindcard_id])
   @@index([tipo])
@@ -65,28 +71,28 @@ model card {
 }
 
 model opcao_resposta {
-  id          String  @id @default(cuid())
-  texto       String
-  correta     Boolean @default(false)
-  card_id     String
+  id      String  @id @default(cuid())
+  texto   String
+  correta Boolean @default(false)
+  card_id String
 
-  card        card    @relation(fields: [card_id], references: [id])
+  card card @relation(fields: [card_id], references: [id])
 
   @@index([card_id])
 }
 
 model pratica {
-  id                      String    @id @default(cuid())
-  usuario_id              String
-  mindcard_id             String?
-  acertos                 Int       @default(0)
-  erros                   Int       @default(0)
-  sequencia_conquistada   Int       @default(0)
-  xp_ganho                Int       @default(0)
-  data_pratica            DateTime  @default(now())
+  id                    String   @id @default(cuid())
+  usuario_id            String
+  mindcard_id           String?
+  acertos               Int      @default(0)
+  erros                 Int      @default(0)
+  sequencia_conquistada Int      @default(0)
+  xp_ganho              Int      @default(0)
+  data_pratica          DateTime @default(now())
 
-  usuario                 usuario   @relation(fields: [usuario_id], references: [id])
-  mindcard                mindcard? @relation(fields: [mindcard_id], references: [id])
+  usuario  usuario   @relation(fields: [usuario_id], references: [id])
+  mindcard mindcard? @relation(fields: [mindcard_id], references: [id])
 
   @@index([usuario_id])
   @@index([mindcard_id])
@@ -103,4 +109,11 @@ enum dificuldade {
   FACIL
   MEDIO
   DIFICIL
+}
+
+enum StatusProcessamento {
+  PENDENTE
+  PROCESSANDO
+  CONCLUIDO
+  FALHOU
 }

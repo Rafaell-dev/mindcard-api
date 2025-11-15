@@ -16,6 +16,8 @@ interface CreateMindcardWithAiRequest {
   promptPersonalizado?: string | null;
   usuarioId: string;
   tipoGeracao: 'FLASHCARDS' | 'QUIZ';
+  skipFileUpload?: boolean; // Flag para pular upload do R2 (quando já foi feito)
+  existingMindcardId?: string; // ID do mindcard existente (modo assíncrono)
 }
 
 /**
@@ -40,6 +42,8 @@ export class CreateMindcardWithAiUseCase {
     promptPersonalizado,
     usuarioId,
     tipoGeracao,
+    skipFileUpload = false,
+    existingMindcardId,
   }: CreateMindcardWithAiRequest) {
     if (!fonteArquivo) {
       throw new BadRequestException(
@@ -47,30 +51,48 @@ export class CreateMindcardWithAiUseCase {
       );
     }
 
-    const mindcardId = uuidV7();
+    // Usar ID existente ou gerar novo
+    const mindcardId = existingMindcardId ?? uuidV7();
     let fonteArquivoUrl: string | null = null;
     const createdCards: Card[] = [];
 
     try {
-      // Step 1: Upload file to R2
-      this.logger.log(`Uploading file for mindcard ${mindcardId}`);
-      fonteArquivoUrl = await this.r2Service.uploadFileFromMulter(
-        fonteArquivo,
-        `mindcards/${usuarioId}_${mindcardId}`,
-      );
+      // Step 1: Upload file to R2 (apenas se não for processamento assíncrono)
+      if (!skipFileUpload) {
+        this.logger.log(`Uploading file for mindcard ${mindcardId}`);
+        fonteArquivoUrl = await this.r2Service.uploadFileFromMulter(
+          fonteArquivo,
+          `mindcards/${usuarioId}_${mindcardId}`,
+        );
+      } else {
+        this.logger.log(
+          `Skipping file upload for mindcard ${mindcardId} (async processing)`,
+        );
+      }
 
-      // Step 2: Create mindcard
-      this.logger.log(`Creating mindcard ${mindcardId}`);
-      const mindcard = new Mindcard({
-        id: mindcardId,
-        titulo,
-        fonteArquivo: fonteArquivoUrl,
-        promptPersonalizado: promptPersonalizado ?? null,
-        usuarioId,
-        dataCriacao: new Date(),
-      });
+      // Step 2: Create mindcard (apenas se titulo foi fornecido)
+      // No modo assíncrono, o mindcard já foi criado, então titulo vem vazio
+      let createdMindcard: Mindcard | null = null;
+      if (titulo) {
+        this.logger.log(`Creating mindcard ${mindcardId}`);
+        createdMindcard = new Mindcard({
+          id: mindcardId,
+          titulo,
+          fonteArquivo: fonteArquivoUrl,
+          promptPersonalizado: promptPersonalizado ?? null,
+          usuarioId,
+          dataCriacao: new Date(),
+        });
 
-      await this.mindcardRepository.create(mindcard);
+        await this.mindcardRepository.create(createdMindcard);
+      } else {
+        // Modo assíncrono: buscar mindcard existente
+        this.logger.log(`Loading existing mindcard ${mindcardId}`);
+        createdMindcard = await this.mindcardRepository.findById(mindcardId);
+        if (!createdMindcard) {
+          throw new Error(`Mindcard ${mindcardId} not found`);
+        }
+      }
 
       // Step 3: Generate cards with AI
       this.logger.log(
@@ -88,7 +110,7 @@ export class CreateMindcardWithAiUseCase {
       );
 
       return {
-        mindcard,
+        mindcard: createdMindcard,
         cards: createdCards,
         totalGenerated: createdCards.length,
       };

@@ -10,7 +10,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateMindcardWithAiUseCase } from 'src/modules/mindcard/useCases/createMindcardWithAiUseCase/createMindcardWithAiUseCase';
+import { CreateMindcardAsyncUseCase } from 'src/modules/mindcard/useCases/createMindcardAsyncUseCase/createMindcardAsyncUseCase';
 import { FindByIdMindcardUseCase } from 'src/modules/mindcard/useCases/findByIdMindcardUseCase/findByIdMindcardUseCase';
 import { FindByUsuarioIdMindcardUseCase } from 'src/modules/mindcard/useCases/findByUsuarioIdMindcardUseCase/findByUsuarioIdMindcardUseCase';
 import { UpdateMindcardByIdUseCase } from 'src/modules/mindcard/useCases/updateMindcardByIdUseCase/updateMindcardByIdUseCase';
@@ -22,13 +22,18 @@ import { MindcardViewModel } from './viewModel/mindcardViewModel';
 @Controller('mindcard')
 export class MindcardController {
   constructor(
-    private createMindcardWithAiUseCase: CreateMindcardWithAiUseCase,
+    private createMindcardAsyncUseCase: CreateMindcardAsyncUseCase,
     private findByIdMindcardUseCase: FindByIdMindcardUseCase,
     private findByUsuarioIdMindcardUseCase: FindByUsuarioIdMindcardUseCase,
     private updateMindcardByIdUseCase: UpdateMindcardByIdUseCase,
     private deleteMindcardByIdUseCase: DeleteMindcardByIdUseCase,
   ) {}
 
+  /**
+   * POST /mindcard/criar
+   * Cria mindcard de forma assíncrona e retorna imediatamente com jobId
+   * O processamento com IA acontece em background
+   */
   @Post('criar')
   @UseInterceptors(FileInterceptor('fonteArquivo'))
   async createPost(
@@ -37,7 +42,7 @@ export class MindcardController {
   ) {
     const { titulo, promptPersonalizado, usuarioId, tipoGeracao } = body;
 
-    const result = await this.createMindcardWithAiUseCase.execute({
+    const result = await this.createMindcardAsyncUseCase.execute({
       titulo,
       fonteArquivo: file,
       promptPersonalizado,
@@ -46,8 +51,13 @@ export class MindcardController {
     });
 
     return {
-      mindcard: MindcardViewModel.toHttp(result.mindcard),
-      totalCardsGenerated: result.totalGenerated,
+      success: true,
+      message: result.message,
+      data: {
+        mindcardId: result.mindcardId,
+        jobId: result.jobId,
+        status: result.status,
+      },
     };
   }
 

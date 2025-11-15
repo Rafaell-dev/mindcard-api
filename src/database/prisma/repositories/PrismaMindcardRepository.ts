@@ -6,6 +6,7 @@ import {
 import { MindcardRepository } from 'src/modules/mindcard/repositories/MindcardRepository';
 import { PrismaMindcardMapper } from '../mappers/PrismaMindcardMapper';
 import { PrismaService } from '../prisma.service';
+import { StatusProcessamento } from 'src/queue/interfaces/job-data.interface';
 
 @Injectable()
 export class PrismaMindcardRepository implements MindcardRepository {
@@ -68,5 +69,35 @@ export class PrismaMindcardRepository implements MindcardRepository {
         id,
       },
     });
+  }
+
+  async updateStatus(
+    id: string,
+    status: StatusProcessamento,
+    iniciadoEm?: Date,
+    concluidoEm?: Date,
+    mensagemErro?: string,
+  ): Promise<void> {
+    await this.prisma.mindcard.update({
+      where: { id },
+      data: {
+        status_processamento: status,
+        iniciado_em: iniciadoEm,
+        concluido_em: concluidoEm,
+        mensagem_erro: mensagemErro,
+      },
+    });
+  }
+
+  async findByJobId(jobId: string): Promise<Mindcard | null> {
+    const mindcard = await this.prisma.mindcard.findUnique({
+      where: {
+        job_id: jobId,
+      },
+    });
+
+    if (!mindcard) return null;
+
+    return PrismaMindcardMapper.toDomain(mindcard);
   }
 }

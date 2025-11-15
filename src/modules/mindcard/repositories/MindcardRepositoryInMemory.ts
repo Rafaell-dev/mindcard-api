@@ -64,4 +64,22 @@ export class MindcardRepositoryInMemory implements MindcardRepository {
     this.mindcards = this.mindcards.filter((mindcard) => mindcard.id !== id);
     return Promise.resolve();
   }
+
+  async updateStatus(
+    _id: string,
+    _status: string,
+    _iniciadoEm?: Date,
+    _concluidoEm?: Date,
+    _mensagemErro?: string,
+  ): Promise<void> {
+    // Para o repositório in-memory, não implementamos controle de status
+    // pois é um recurso específico do processamento assíncrono
+    return Promise.resolve();
+  }
+
+  async findByJobId(_jobId: string): Promise<Mindcard | null> {
+    // Para o repositório in-memory, não temos suporte a jobId
+    // pois é um recurso específico do processamento assíncrono
+    return Promise.resolve(null);
+  }
 }

@@ -89,4 +89,23 @@ export const env = {
   GEMINI_RETRY_DELAY: process.env.GEMINI_RETRY_DELAY
     ? parseInt(process.env.GEMINI_RETRY_DELAY, 10)
     : 1000,
+
+  // Redis Configuration
+  REDIS_HOST: process.env.REDIS_HOST ?? 'localhost',
+  REDIS_PORT: process.env.REDIS_PORT
+    ? parseInt(process.env.REDIS_PORT, 10)
+    : 6379,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD ?? undefined,
+  REDIS_DB: process.env.REDIS_DB ? parseInt(process.env.REDIS_DB, 10) : 0,
+
+  // Queue Configuration
+  QUEUE_CONCURRENCY: process.env.QUEUE_CONCURRENCY
+    ? parseInt(process.env.QUEUE_CONCURRENCY, 10)
+    : 3,
+  QUEUE_MAX_RETRIES: process.env.QUEUE_MAX_RETRIES
+    ? parseInt(process.env.QUEUE_MAX_RETRIES, 10)
+    : 3,
+  QUEUE_TIMEOUT: process.env.QUEUE_TIMEOUT
+    ? parseInt(process.env.QUEUE_TIMEOUT, 10)
+    : 300000,
 } as const;
