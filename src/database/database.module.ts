@@ -8,6 +8,8 @@ import { CardRepository } from 'src/modules/card/repositories/CardRepository';
 import { PrismaCardRepository } from './prisma/repositories/PrismaCardRepository';
 import { OpcaoRespostaRepository } from 'src/modules/card/repositories/OpcaoRespostaRepository';
 import { PrismaOpcaoRespostaRepository } from './prisma/repositories/PrismaOpcaoRespostaRepository';
+import { FaculdadeRepository } from 'src/modules/faculdade/repositories/FaculdadeRepository';
+import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdadeRepository';
 
 @Module({
   providers: [
@@ -28,12 +30,17 @@ import { PrismaOpcaoRespostaRepository } from './prisma/repositories/PrismaOpcao
       provide: OpcaoRespostaRepository,
       useClass: PrismaOpcaoRespostaRepository,
     },
+    {
+      provide: FaculdadeRepository,
+      useClass: PrismaFaculdadeRepository,
+    },
   ],
   exports: [
     UserRepository,
     MindcardRepository,
     CardRepository,
     OpcaoRespostaRepository,
+    FaculdadeRepository,
   ],
 })
 export class DatabaseModule {}

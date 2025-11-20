@@ -3,10 +3,12 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './controllers/modules/user/user.module';
 import { MindcardModule } from './controllers/modules/mindcard/mindcard.module';
 import { CardModule } from './controllers/modules/card/card.module';
+import { FaculdadeModule } from './modules/faculdade/faculdade.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { R2Module } from './r2/r2.module';
 import { GeminiModule } from './gemini/gemini.module';
 import { QueueModule } from './queue/queue.module';
+import { LoggerModule } from './logger/logger.module';
 import r2Config from './config/r2.config';
 import geminiConfig from './config/gemini.config';
 import redisConfig from './config/redis.config';
@@ -15,10 +17,12 @@ import queueConfig from './config/queue.config';
 
 @Module({
   imports: [
+    LoggerModule,
     DatabaseModule,
     UserModule,
     MindcardModule,
     CardModule,
+    FaculdadeModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [r2Config, geminiConfig, redisConfig, queueConfig],

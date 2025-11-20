@@ -33,7 +33,8 @@ export class UpdateUserByIdUseCase {
         data.email,
       );
 
-      if (userAlreadyExist) throw new ConflictException();
+      if (userAlreadyExist && userAlreadyExist.id !== id)
+        throw new ConflictException();
     }
 
     if (data.senha) {

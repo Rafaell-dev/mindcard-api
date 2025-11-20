@@ -1,4 +1,4 @@
-import { Prisma } from 'generated/prisma';
+import { Prisma } from 'prisma/generated/prisma';
 import { OpcaoResposta } from 'src/modules/card/entities/OpcaoResposta';
 
 export class PrismaOpcaoRespostaMapper {

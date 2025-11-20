@@ -1,5 +1,5 @@
 import { User, type UserProps } from 'src/modules/user/entities/User';
-import type { usuario as PrismaUser } from 'generated/prisma';
+import type { usuario as PrismaUser } from 'prisma/generated/prisma';
 
 const resolveUsername = (email: string) => email;
 

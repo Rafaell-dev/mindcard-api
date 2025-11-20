@@ -4,7 +4,7 @@ import {
   TipoCard,
   Dificuldade,
 } from 'src/modules/card/entities/Card';
-import { Prisma, type card as PrismaCard } from 'generated/prisma';
+import { Prisma, type card as PrismaCard } from 'prisma/generated/prisma';
 
 export class PrismaCardMapper {
   static toPrisma(card: Card): Prisma.cardCreateInput {
