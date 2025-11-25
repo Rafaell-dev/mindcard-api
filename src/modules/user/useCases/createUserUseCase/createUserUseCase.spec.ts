@@ -12,7 +12,7 @@ const makeCreateUserRequest = (
   email: override.email ?? 'email@example.com',
   nome: override.nome ?? 'Fulano de Tal',
   senha: override.senha ?? '123123',
-  faculdade: override.faculdade ?? 'Faculdade XPTO',
+  faculdadeId: override.faculdadeId ?? '019a8588-9582-72f8-ac5e-231e942f52d9',
   idioma: override.idioma ?? 'pt-BR',
 });
 
@@ -59,7 +59,7 @@ describe('Create User', () => {
       email: request.email,
       nome: request.nome,
       senha: request.senha,
-      faculdade: request.faculdade ?? '',
+      faculdadeId: request.faculdadeId ?? '',
       idioma: request.idioma ?? 'pt-BR',
       dataRegistro: new Date(),
       xpTotal: 0,

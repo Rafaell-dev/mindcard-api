@@ -26,13 +26,13 @@ export class UserController {
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 409, description: 'Email já cadastrado' })
   async createPost(@Body() body: CreateUserBody) {
-    const { email, nome, senha, faculdade, idioma } = body;
+    const { email, nome, senha, faculdadeId, idioma } = body;
 
     const user = await this.createUserUseCase.execute({
       email,
       nome,
       senha,
-      faculdade,
+      faculdadeId,
       idioma,
     });
 
@@ -98,7 +98,7 @@ export class UserController {
         email: body.email,
         nome: body.nome,
         senha: body.senha,
-        organizationId: body.faculdade,
+        faculdadeId: body.faculdadeId,
       },
     });
 

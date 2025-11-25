@@ -1492,6 +1492,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type FaculdadeCountOutputType
+   */
+
+  export type FaculdadeCountOutputType = {
+    usuarios: number
+  }
+
+  export type FaculdadeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuarios?: boolean | FaculdadeCountOutputTypeCountUsuariosArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FaculdadeCountOutputType without action
+   */
+  export type FaculdadeCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FaculdadeCountOutputType
+     */
+    select?: FaculdadeCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FaculdadeCountOutputType without action
+   */
+  export type FaculdadeCountOutputTypeCountUsuariosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: usuarioWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -1525,7 +1556,7 @@ export namespace Prisma {
     usuario: string | null
     email: string | null
     senha: string | null
-    faculdade: string | null
+    faculdade_id: string | null
     idioma: string | null
     data_registro: Date | null
     xp_total: number | null
@@ -1539,7 +1570,7 @@ export namespace Prisma {
     usuario: string | null
     email: string | null
     senha: string | null
-    faculdade: string | null
+    faculdade_id: string | null
     idioma: string | null
     data_registro: Date | null
     xp_total: number | null
@@ -1553,7 +1584,7 @@ export namespace Prisma {
     usuario: number
     email: number
     senha: number
-    faculdade: number
+    faculdade_id: number
     idioma: number
     data_registro: number
     xp_total: number
@@ -1581,7 +1612,7 @@ export namespace Prisma {
     usuario?: true
     email?: true
     senha?: true
-    faculdade?: true
+    faculdade_id?: true
     idioma?: true
     data_registro?: true
     xp_total?: true
@@ -1595,7 +1626,7 @@ export namespace Prisma {
     usuario?: true
     email?: true
     senha?: true
-    faculdade?: true
+    faculdade_id?: true
     idioma?: true
     data_registro?: true
     xp_total?: true
@@ -1609,7 +1640,7 @@ export namespace Prisma {
     usuario?: true
     email?: true
     senha?: true
-    faculdade?: true
+    faculdade_id?: true
     idioma?: true
     data_registro?: true
     xp_total?: true
@@ -1710,7 +1741,7 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade: string | null
+    faculdade_id: string | null
     idioma: string
     data_registro: Date
     xp_total: number
@@ -1743,12 +1774,13 @@ export namespace Prisma {
     usuario?: boolean
     email?: boolean
     senha?: boolean
-    faculdade?: boolean
+    faculdade_id?: boolean
     idioma?: boolean
     data_registro?: boolean
     xp_total?: boolean
     sequencia_atual?: boolean
     sequencia_recorde?: boolean
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
     mindcards?: boolean | usuario$mindcardsArgs<ExtArgs>
     praticas?: boolean | usuario$praticasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
@@ -1760,12 +1792,13 @@ export namespace Prisma {
     usuario?: boolean
     email?: boolean
     senha?: boolean
-    faculdade?: boolean
+    faculdade_id?: boolean
     idioma?: boolean
     data_registro?: boolean
     xp_total?: boolean
     sequencia_atual?: boolean
     sequencia_recorde?: boolean
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1774,12 +1807,13 @@ export namespace Prisma {
     usuario?: boolean
     email?: boolean
     senha?: boolean
-    faculdade?: boolean
+    faculdade_id?: boolean
     idioma?: boolean
     data_registro?: boolean
     xp_total?: boolean
     sequencia_atual?: boolean
     sequencia_recorde?: boolean
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectScalar = {
@@ -1788,7 +1822,7 @@ export namespace Prisma {
     usuario?: boolean
     email?: boolean
     senha?: boolean
-    faculdade?: boolean
+    faculdade_id?: boolean
     idioma?: boolean
     data_registro?: boolean
     xp_total?: boolean
@@ -1796,18 +1830,24 @@ export namespace Prisma {
     sequencia_recorde?: boolean
   }
 
-  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "usuario" | "email" | "senha" | "faculdade" | "idioma" | "data_registro" | "xp_total" | "sequencia_atual" | "sequencia_recorde", ExtArgs["result"]["usuario"]>
+  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "usuario" | "email" | "senha" | "faculdade_id" | "idioma" | "data_registro" | "xp_total" | "sequencia_atual" | "sequencia_recorde", ExtArgs["result"]["usuario"]>
   export type usuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
     mindcards?: boolean | usuario$mindcardsArgs<ExtArgs>
     praticas?: boolean | usuario$praticasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type usuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type usuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type usuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
+  }
+  export type usuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculdade?: boolean | usuario$faculdadeArgs<ExtArgs>
+  }
 
   export type $usuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "usuario"
     objects: {
+      faculdade: Prisma.$faculdadePayload<ExtArgs> | null
       mindcards: Prisma.$mindcardPayload<ExtArgs>[]
       praticas: Prisma.$praticaPayload<ExtArgs>[]
     }
@@ -1817,7 +1857,7 @@ export namespace Prisma {
       usuario: string
       email: string
       senha: string
-      faculdade: string | null
+      faculdade_id: string | null
       idioma: string
       data_registro: Date
       xp_total: number
@@ -2217,6 +2257,7 @@ export namespace Prisma {
    */
   export interface Prisma__usuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    faculdade<T extends usuario$faculdadeArgs<ExtArgs> = {}>(args?: Subset<T, usuario$faculdadeArgs<ExtArgs>>): Prisma__faculdadeClient<$Result.GetResult<Prisma.$faculdadePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     mindcards<T extends usuario$mindcardsArgs<ExtArgs> = {}>(args?: Subset<T, usuario$mindcardsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$mindcardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     praticas<T extends usuario$praticasArgs<ExtArgs> = {}>(args?: Subset<T, usuario$praticasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$praticaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -2253,7 +2294,7 @@ export namespace Prisma {
     readonly usuario: FieldRef<"usuario", 'String'>
     readonly email: FieldRef<"usuario", 'String'>
     readonly senha: FieldRef<"usuario", 'String'>
-    readonly faculdade: FieldRef<"usuario", 'String'>
+    readonly faculdade_id: FieldRef<"usuario", 'String'>
     readonly idioma: FieldRef<"usuario", 'String'>
     readonly data_registro: FieldRef<"usuario", 'DateTime'>
     readonly xp_total: FieldRef<"usuario", 'Int'>
@@ -2508,6 +2549,10 @@ export namespace Prisma {
      */
     data: usuarioCreateManyInput | usuarioCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2578,6 +2623,10 @@ export namespace Prisma {
      * Limit how many usuarios to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2644,6 +2693,25 @@ export namespace Prisma {
      * Limit how many usuarios to delete.
      */
     limit?: number
+  }
+
+  /**
+   * usuario.faculdade
+   */
+  export type usuario$faculdadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the faculdade
+     */
+    select?: faculdadeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the faculdade
+     */
+    omit?: faculdadeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    where?: faculdadeWhereInput
   }
 
   /**
@@ -7487,6 +7555,8 @@ export namespace Prisma {
     municipio?: boolean
     uf?: boolean
     situacao?: boolean
+    usuarios?: boolean | faculdade$usuariosArgs<ExtArgs>
+    _count?: boolean | FaculdadeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["faculdade"]>
 
   export type faculdadeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7529,10 +7599,18 @@ export namespace Prisma {
   }
 
   export type faculdadeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "codigo_ies" | "nome" | "sigla" | "categoria" | "organizacao_academica" | "codigo_municipio_ibge" | "municipio" | "uf" | "situacao", ExtArgs["result"]["faculdade"]>
+  export type faculdadeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuarios?: boolean | faculdade$usuariosArgs<ExtArgs>
+    _count?: boolean | FaculdadeCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type faculdadeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type faculdadeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $faculdadePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "faculdade"
-    objects: {}
+    objects: {
+      usuarios: Prisma.$usuarioPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       codigo_ies: number
@@ -7938,6 +8016,7 @@ export namespace Prisma {
    */
   export interface Prisma__faculdadeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    usuarios<T extends faculdade$usuariosArgs<ExtArgs> = {}>(args?: Subset<T, faculdade$usuariosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7994,6 +8073,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * Filter, which faculdade to fetch.
      */
     where: faculdadeWhereUniqueInput
@@ -8012,6 +8095,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * Filter, which faculdade to fetch.
      */
     where: faculdadeWhereUniqueInput
@@ -8029,6 +8116,10 @@ export namespace Prisma {
      * Omit specific fields from the faculdade
      */
     omit?: faculdadeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
     /**
      * Filter, which faculdade to fetch.
      */
@@ -8078,6 +8169,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * Filter, which faculdade to fetch.
      */
     where?: faculdadeWhereInput
@@ -8126,6 +8221,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * Filter, which faculdades to fetch.
      */
     where?: faculdadeWhereInput
@@ -8168,6 +8267,10 @@ export namespace Prisma {
      * Omit specific fields from the faculdade
      */
     omit?: faculdadeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
     /**
      * The data needed to create a faculdade.
      */
@@ -8216,6 +8319,10 @@ export namespace Prisma {
      * Omit specific fields from the faculdade
      */
     omit?: faculdadeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
     /**
      * The data needed to update a faculdade.
      */
@@ -8283,6 +8390,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * The filter to search for the faculdade to update in case it exists.
      */
     where: faculdadeWhereUniqueInput
@@ -8309,6 +8420,10 @@ export namespace Prisma {
      */
     omit?: faculdadeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
+    /**
      * Filter which faculdade to delete.
      */
     where: faculdadeWhereUniqueInput
@@ -8329,6 +8444,30 @@ export namespace Prisma {
   }
 
   /**
+   * faculdade.usuarios
+   */
+  export type faculdade$usuariosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the usuario
+     */
+    select?: usuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the usuario
+     */
+    omit?: usuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioInclude<ExtArgs> | null
+    where?: usuarioWhereInput
+    orderBy?: usuarioOrderByWithRelationInput | usuarioOrderByWithRelationInput[]
+    cursor?: usuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UsuarioScalarFieldEnum | UsuarioScalarFieldEnum[]
+  }
+
+  /**
    * faculdade without action
    */
   export type faculdadeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8340,6 +8479,10 @@ export namespace Prisma {
      * Omit specific fields from the faculdade
      */
     omit?: faculdadeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: faculdadeInclude<ExtArgs> | null
   }
 
 
@@ -8363,7 +8506,7 @@ export namespace Prisma {
     usuario: 'usuario',
     email: 'email',
     senha: 'senha',
-    faculdade: 'faculdade',
+    faculdade_id: 'faculdade_id',
     idioma: 'idioma',
     data_registro: 'data_registro',
     xp_total: 'xp_total',
@@ -8619,12 +8762,13 @@ export namespace Prisma {
     usuario?: StringFilter<"usuario"> | string
     email?: StringFilter<"usuario"> | string
     senha?: StringFilter<"usuario"> | string
-    faculdade?: StringNullableFilter<"usuario"> | string | null
+    faculdade_id?: StringNullableFilter<"usuario"> | string | null
     idioma?: StringFilter<"usuario"> | string
     data_registro?: DateTimeFilter<"usuario"> | Date | string
     xp_total?: IntFilter<"usuario"> | number
     sequencia_atual?: IntFilter<"usuario"> | number
     sequencia_recorde?: IntFilter<"usuario"> | number
+    faculdade?: XOR<FaculdadeNullableScalarRelationFilter, faculdadeWhereInput> | null
     mindcards?: MindcardListRelationFilter
     praticas?: PraticaListRelationFilter
   }
@@ -8635,12 +8779,13 @@ export namespace Prisma {
     usuario?: SortOrder
     email?: SortOrder
     senha?: SortOrder
-    faculdade?: SortOrderInput | SortOrder
+    faculdade_id?: SortOrderInput | SortOrder
     idioma?: SortOrder
     data_registro?: SortOrder
     xp_total?: SortOrder
     sequencia_atual?: SortOrder
     sequencia_recorde?: SortOrder
+    faculdade?: faculdadeOrderByWithRelationInput
     mindcards?: mindcardOrderByRelationAggregateInput
     praticas?: praticaOrderByRelationAggregateInput
   }
@@ -8654,12 +8799,13 @@ export namespace Prisma {
     NOT?: usuarioWhereInput | usuarioWhereInput[]
     nome?: StringFilter<"usuario"> | string
     senha?: StringFilter<"usuario"> | string
-    faculdade?: StringNullableFilter<"usuario"> | string | null
+    faculdade_id?: StringNullableFilter<"usuario"> | string | null
     idioma?: StringFilter<"usuario"> | string
     data_registro?: DateTimeFilter<"usuario"> | Date | string
     xp_total?: IntFilter<"usuario"> | number
     sequencia_atual?: IntFilter<"usuario"> | number
     sequencia_recorde?: IntFilter<"usuario"> | number
+    faculdade?: XOR<FaculdadeNullableScalarRelationFilter, faculdadeWhereInput> | null
     mindcards?: MindcardListRelationFilter
     praticas?: PraticaListRelationFilter
   }, "id" | "usuario" | "email">
@@ -8670,7 +8816,7 @@ export namespace Prisma {
     usuario?: SortOrder
     email?: SortOrder
     senha?: SortOrder
-    faculdade?: SortOrderInput | SortOrder
+    faculdade_id?: SortOrderInput | SortOrder
     idioma?: SortOrder
     data_registro?: SortOrder
     xp_total?: SortOrder
@@ -8692,7 +8838,7 @@ export namespace Prisma {
     usuario?: StringWithAggregatesFilter<"usuario"> | string
     email?: StringWithAggregatesFilter<"usuario"> | string
     senha?: StringWithAggregatesFilter<"usuario"> | string
-    faculdade?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    faculdade_id?: StringNullableWithAggregatesFilter<"usuario"> | string | null
     idioma?: StringWithAggregatesFilter<"usuario"> | string
     data_registro?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
     xp_total?: IntWithAggregatesFilter<"usuario"> | number
@@ -9003,6 +9149,7 @@ export namespace Prisma {
     municipio?: StringFilter<"faculdade"> | string
     uf?: StringFilter<"faculdade"> | string
     situacao?: EnumSituacaoIESFilter<"faculdade"> | $Enums.SituacaoIES
+    usuarios?: UsuarioListRelationFilter
   }
 
   export type faculdadeOrderByWithRelationInput = {
@@ -9016,6 +9163,7 @@ export namespace Prisma {
     municipio?: SortOrder
     uf?: SortOrder
     situacao?: SortOrder
+    usuarios?: usuarioOrderByRelationAggregateInput
   }
 
   export type faculdadeWhereUniqueInput = Prisma.AtLeast<{
@@ -9032,6 +9180,7 @@ export namespace Prisma {
     municipio?: StringFilter<"faculdade"> | string
     uf?: StringFilter<"faculdade"> | string
     situacao?: EnumSituacaoIESFilter<"faculdade"> | $Enums.SituacaoIES
+    usuarios?: UsuarioListRelationFilter
   }, "id" | "codigo_ies">
 
   export type faculdadeOrderByWithAggregationInput = {
@@ -9074,12 +9223,12 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
     sequencia_atual?: number
     sequencia_recorde?: number
+    faculdade?: faculdadeCreateNestedOneWithoutUsuariosInput
     mindcards?: mindcardCreateNestedManyWithoutUsuarioInput
     praticas?: praticaCreateNestedManyWithoutUsuarioInput
   }
@@ -9090,7 +9239,7 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
+    faculdade_id?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
@@ -9106,12 +9255,12 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
     sequencia_atual?: IntFieldUpdateOperationsInput | number
     sequencia_recorde?: IntFieldUpdateOperationsInput | number
+    faculdade?: faculdadeUpdateOneWithoutUsuariosNestedInput
     mindcards?: mindcardUpdateManyWithoutUsuarioNestedInput
     praticas?: praticaUpdateManyWithoutUsuarioNestedInput
   }
@@ -9122,7 +9271,7 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
+    faculdade_id?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
@@ -9138,7 +9287,7 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
+    faculdade_id?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
@@ -9152,7 +9301,6 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
@@ -9166,7 +9314,7 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
+    faculdade_id?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
@@ -9493,6 +9641,7 @@ export namespace Prisma {
     municipio: string
     uf: string
     situacao: $Enums.SituacaoIES
+    usuarios?: usuarioCreateNestedManyWithoutFaculdadeInput
   }
 
   export type faculdadeUncheckedCreateInput = {
@@ -9506,6 +9655,7 @@ export namespace Prisma {
     municipio: string
     uf: string
     situacao: $Enums.SituacaoIES
+    usuarios?: usuarioUncheckedCreateNestedManyWithoutFaculdadeInput
   }
 
   export type faculdadeUpdateInput = {
@@ -9519,6 +9669,7 @@ export namespace Prisma {
     municipio?: StringFieldUpdateOperationsInput | string
     uf?: StringFieldUpdateOperationsInput | string
     situacao?: EnumSituacaoIESFieldUpdateOperationsInput | $Enums.SituacaoIES
+    usuarios?: usuarioUpdateManyWithoutFaculdadeNestedInput
   }
 
   export type faculdadeUncheckedUpdateInput = {
@@ -9532,6 +9683,7 @@ export namespace Prisma {
     municipio?: StringFieldUpdateOperationsInput | string
     uf?: StringFieldUpdateOperationsInput | string
     situacao?: EnumSituacaoIESFieldUpdateOperationsInput | $Enums.SituacaoIES
+    usuarios?: usuarioUncheckedUpdateManyWithoutFaculdadeNestedInput
   }
 
   export type faculdadeCreateManyInput = {
@@ -9625,6 +9777,11 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type FaculdadeNullableScalarRelationFilter = {
+    is?: faculdadeWhereInput | null
+    isNot?: faculdadeWhereInput | null
+  }
+
   export type MindcardListRelationFilter = {
     every?: mindcardWhereInput
     some?: mindcardWhereInput
@@ -9656,7 +9813,7 @@ export namespace Prisma {
     usuario?: SortOrder
     email?: SortOrder
     senha?: SortOrder
-    faculdade?: SortOrder
+    faculdade_id?: SortOrder
     idioma?: SortOrder
     data_registro?: SortOrder
     xp_total?: SortOrder
@@ -9676,7 +9833,7 @@ export namespace Prisma {
     usuario?: SortOrder
     email?: SortOrder
     senha?: SortOrder
-    faculdade?: SortOrder
+    faculdade_id?: SortOrder
     idioma?: SortOrder
     data_registro?: SortOrder
     xp_total?: SortOrder
@@ -9690,7 +9847,7 @@ export namespace Prisma {
     usuario?: SortOrder
     email?: SortOrder
     senha?: SortOrder
-    faculdade?: SortOrder
+    faculdade_id?: SortOrder
     idioma?: SortOrder
     data_registro?: SortOrder
     xp_total?: SortOrder
@@ -10056,6 +10213,16 @@ export namespace Prisma {
     not?: NestedEnumSituacaoIESFilter<$PrismaModel> | $Enums.SituacaoIES
   }
 
+  export type UsuarioListRelationFilter = {
+    every?: usuarioWhereInput
+    some?: usuarioWhereInput
+    none?: usuarioWhereInput
+  }
+
+  export type usuarioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type faculdadeCountOrderByAggregateInput = {
     id?: SortOrder
     codigo_ies?: SortOrder
@@ -10123,6 +10290,12 @@ export namespace Prisma {
     _max?: NestedEnumSituacaoIESFilter<$PrismaModel>
   }
 
+  export type faculdadeCreateNestedOneWithoutUsuariosInput = {
+    create?: XOR<faculdadeCreateWithoutUsuariosInput, faculdadeUncheckedCreateWithoutUsuariosInput>
+    connectOrCreate?: faculdadeCreateOrConnectWithoutUsuariosInput
+    connect?: faculdadeWhereUniqueInput
+  }
+
   export type mindcardCreateNestedManyWithoutUsuarioInput = {
     create?: XOR<mindcardCreateWithoutUsuarioInput, mindcardUncheckedCreateWithoutUsuarioInput> | mindcardCreateWithoutUsuarioInput[] | mindcardUncheckedCreateWithoutUsuarioInput[]
     connectOrCreate?: mindcardCreateOrConnectWithoutUsuarioInput | mindcardCreateOrConnectWithoutUsuarioInput[]
@@ -10155,10 +10328,6 @@ export namespace Prisma {
     set?: string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -10169,6 +10338,16 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type faculdadeUpdateOneWithoutUsuariosNestedInput = {
+    create?: XOR<faculdadeCreateWithoutUsuariosInput, faculdadeUncheckedCreateWithoutUsuariosInput>
+    connectOrCreate?: faculdadeCreateOrConnectWithoutUsuariosInput
+    upsert?: faculdadeUpsertWithoutUsuariosInput
+    disconnect?: faculdadeWhereInput | boolean
+    delete?: faculdadeWhereInput | boolean
+    connect?: faculdadeWhereUniqueInput
+    update?: XOR<XOR<faculdadeUpdateToOneWithWhereWithoutUsuariosInput, faculdadeUpdateWithoutUsuariosInput>, faculdadeUncheckedUpdateWithoutUsuariosInput>
   }
 
   export type mindcardUpdateManyWithoutUsuarioNestedInput = {
@@ -10197,6 +10376,10 @@ export namespace Prisma {
     update?: praticaUpdateWithWhereUniqueWithoutUsuarioInput | praticaUpdateWithWhereUniqueWithoutUsuarioInput[]
     updateMany?: praticaUpdateManyWithWhereWithoutUsuarioInput | praticaUpdateManyWithWhereWithoutUsuarioInput[]
     deleteMany?: praticaScalarWhereInput | praticaScalarWhereInput[]
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type mindcardUncheckedUpdateManyWithoutUsuarioNestedInput = {
@@ -10445,12 +10628,54 @@ export namespace Prisma {
     update?: XOR<XOR<mindcardUpdateToOneWithWhereWithoutPraticasInput, mindcardUpdateWithoutPraticasInput>, mindcardUncheckedUpdateWithoutPraticasInput>
   }
 
+  export type usuarioCreateNestedManyWithoutFaculdadeInput = {
+    create?: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput> | usuarioCreateWithoutFaculdadeInput[] | usuarioUncheckedCreateWithoutFaculdadeInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutFaculdadeInput | usuarioCreateOrConnectWithoutFaculdadeInput[]
+    createMany?: usuarioCreateManyFaculdadeInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
+  export type usuarioUncheckedCreateNestedManyWithoutFaculdadeInput = {
+    create?: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput> | usuarioCreateWithoutFaculdadeInput[] | usuarioUncheckedCreateWithoutFaculdadeInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutFaculdadeInput | usuarioCreateOrConnectWithoutFaculdadeInput[]
+    createMany?: usuarioCreateManyFaculdadeInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
   export type NullableEnumCategoriaIESFieldUpdateOperationsInput = {
     set?: $Enums.CategoriaIES | null
   }
 
   export type EnumSituacaoIESFieldUpdateOperationsInput = {
     set?: $Enums.SituacaoIES
+  }
+
+  export type usuarioUpdateManyWithoutFaculdadeNestedInput = {
+    create?: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput> | usuarioCreateWithoutFaculdadeInput[] | usuarioUncheckedCreateWithoutFaculdadeInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutFaculdadeInput | usuarioCreateOrConnectWithoutFaculdadeInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutFaculdadeInput | usuarioUpsertWithWhereUniqueWithoutFaculdadeInput[]
+    createMany?: usuarioCreateManyFaculdadeInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutFaculdadeInput | usuarioUpdateWithWhereUniqueWithoutFaculdadeInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutFaculdadeInput | usuarioUpdateManyWithWhereWithoutFaculdadeInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutFaculdadeNestedInput = {
+    create?: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput> | usuarioCreateWithoutFaculdadeInput[] | usuarioUncheckedCreateWithoutFaculdadeInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutFaculdadeInput | usuarioCreateOrConnectWithoutFaculdadeInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutFaculdadeInput | usuarioUpsertWithWhereUniqueWithoutFaculdadeInput[]
+    createMany?: usuarioCreateManyFaculdadeInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutFaculdadeInput | usuarioUpdateWithWhereUniqueWithoutFaculdadeInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutFaculdadeInput | usuarioUpdateManyWithWhereWithoutFaculdadeInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10712,6 +10937,37 @@ export namespace Prisma {
     _max?: NestedEnumSituacaoIESFilter<$PrismaModel>
   }
 
+  export type faculdadeCreateWithoutUsuariosInput = {
+    id?: string
+    codigo_ies: number
+    nome: string
+    sigla?: string | null
+    categoria?: $Enums.CategoriaIES | null
+    organizacao_academica?: string | null
+    codigo_municipio_ibge?: string | null
+    municipio: string
+    uf: string
+    situacao: $Enums.SituacaoIES
+  }
+
+  export type faculdadeUncheckedCreateWithoutUsuariosInput = {
+    id?: string
+    codigo_ies: number
+    nome: string
+    sigla?: string | null
+    categoria?: $Enums.CategoriaIES | null
+    organizacao_academica?: string | null
+    codigo_municipio_ibge?: string | null
+    municipio: string
+    uf: string
+    situacao: $Enums.SituacaoIES
+  }
+
+  export type faculdadeCreateOrConnectWithoutUsuariosInput = {
+    where: faculdadeWhereUniqueInput
+    create: XOR<faculdadeCreateWithoutUsuariosInput, faculdadeUncheckedCreateWithoutUsuariosInput>
+  }
+
   export type mindcardCreateWithoutUsuarioInput = {
     id?: string
     titulo: string
@@ -10780,6 +11036,43 @@ export namespace Prisma {
   export type praticaCreateManyUsuarioInputEnvelope = {
     data: praticaCreateManyUsuarioInput | praticaCreateManyUsuarioInput[]
     skipDuplicates?: boolean
+  }
+
+  export type faculdadeUpsertWithoutUsuariosInput = {
+    update: XOR<faculdadeUpdateWithoutUsuariosInput, faculdadeUncheckedUpdateWithoutUsuariosInput>
+    create: XOR<faculdadeCreateWithoutUsuariosInput, faculdadeUncheckedCreateWithoutUsuariosInput>
+    where?: faculdadeWhereInput
+  }
+
+  export type faculdadeUpdateToOneWithWhereWithoutUsuariosInput = {
+    where?: faculdadeWhereInput
+    data: XOR<faculdadeUpdateWithoutUsuariosInput, faculdadeUncheckedUpdateWithoutUsuariosInput>
+  }
+
+  export type faculdadeUpdateWithoutUsuariosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    codigo_ies?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    sigla?: NullableStringFieldUpdateOperationsInput | string | null
+    categoria?: NullableEnumCategoriaIESFieldUpdateOperationsInput | $Enums.CategoriaIES | null
+    organizacao_academica?: NullableStringFieldUpdateOperationsInput | string | null
+    codigo_municipio_ibge?: NullableStringFieldUpdateOperationsInput | string | null
+    municipio?: StringFieldUpdateOperationsInput | string
+    uf?: StringFieldUpdateOperationsInput | string
+    situacao?: EnumSituacaoIESFieldUpdateOperationsInput | $Enums.SituacaoIES
+  }
+
+  export type faculdadeUncheckedUpdateWithoutUsuariosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    codigo_ies?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    sigla?: NullableStringFieldUpdateOperationsInput | string | null
+    categoria?: NullableEnumCategoriaIESFieldUpdateOperationsInput | $Enums.CategoriaIES | null
+    organizacao_academica?: NullableStringFieldUpdateOperationsInput | string | null
+    codigo_municipio_ibge?: NullableStringFieldUpdateOperationsInput | string | null
+    municipio?: StringFieldUpdateOperationsInput | string
+    uf?: StringFieldUpdateOperationsInput | string
+    situacao?: EnumSituacaoIESFieldUpdateOperationsInput | $Enums.SituacaoIES
   }
 
   export type mindcardUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -10851,12 +11144,12 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
     sequencia_atual?: number
     sequencia_recorde?: number
+    faculdade?: faculdadeCreateNestedOneWithoutUsuariosInput
     praticas?: praticaCreateNestedManyWithoutUsuarioInput
   }
 
@@ -10866,7 +11159,7 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
+    faculdade_id?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
@@ -10959,12 +11252,12 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
     sequencia_atual?: IntFieldUpdateOperationsInput | number
     sequencia_recorde?: IntFieldUpdateOperationsInput | number
+    faculdade?: faculdadeUpdateOneWithoutUsuariosNestedInput
     praticas?: praticaUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -10974,7 +11267,7 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
+    faculdade_id?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
@@ -11219,12 +11512,12 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
     sequencia_atual?: number
     sequencia_recorde?: number
+    faculdade?: faculdadeCreateNestedOneWithoutUsuariosInput
     mindcards?: mindcardCreateNestedManyWithoutUsuarioInput
   }
 
@@ -11234,7 +11527,7 @@ export namespace Prisma {
     usuario: string
     email: string
     senha: string
-    faculdade?: string | null
+    faculdade_id?: string | null
     idioma?: string
     data_registro?: Date | string
     xp_total?: number
@@ -11300,12 +11593,12 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
     sequencia_atual?: IntFieldUpdateOperationsInput | number
     sequencia_recorde?: IntFieldUpdateOperationsInput | number
+    faculdade?: faculdadeUpdateOneWithoutUsuariosNestedInput
     mindcards?: mindcardUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -11315,7 +11608,7 @@ export namespace Prisma {
     usuario?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     senha?: StringFieldUpdateOperationsInput | string
-    faculdade?: NullableStringFieldUpdateOperationsInput | string | null
+    faculdade_id?: NullableStringFieldUpdateOperationsInput | string | null
     idioma?: StringFieldUpdateOperationsInput | string
     data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
     xp_total?: IntFieldUpdateOperationsInput | number
@@ -11363,6 +11656,79 @@ export namespace Prisma {
     iniciado_em?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     concluido_em?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cards?: cardUncheckedUpdateManyWithoutMindcardNestedInput
+  }
+
+  export type usuarioCreateWithoutFaculdadeInput = {
+    id?: string
+    nome: string
+    usuario: string
+    email: string
+    senha: string
+    idioma?: string
+    data_registro?: Date | string
+    xp_total?: number
+    sequencia_atual?: number
+    sequencia_recorde?: number
+    mindcards?: mindcardCreateNestedManyWithoutUsuarioInput
+    praticas?: praticaCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioUncheckedCreateWithoutFaculdadeInput = {
+    id?: string
+    nome: string
+    usuario: string
+    email: string
+    senha: string
+    idioma?: string
+    data_registro?: Date | string
+    xp_total?: number
+    sequencia_atual?: number
+    sequencia_recorde?: number
+    mindcards?: mindcardUncheckedCreateNestedManyWithoutUsuarioInput
+    praticas?: praticaUncheckedCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioCreateOrConnectWithoutFaculdadeInput = {
+    where: usuarioWhereUniqueInput
+    create: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput>
+  }
+
+  export type usuarioCreateManyFaculdadeInputEnvelope = {
+    data: usuarioCreateManyFaculdadeInput | usuarioCreateManyFaculdadeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type usuarioUpsertWithWhereUniqueWithoutFaculdadeInput = {
+    where: usuarioWhereUniqueInput
+    update: XOR<usuarioUpdateWithoutFaculdadeInput, usuarioUncheckedUpdateWithoutFaculdadeInput>
+    create: XOR<usuarioCreateWithoutFaculdadeInput, usuarioUncheckedCreateWithoutFaculdadeInput>
+  }
+
+  export type usuarioUpdateWithWhereUniqueWithoutFaculdadeInput = {
+    where: usuarioWhereUniqueInput
+    data: XOR<usuarioUpdateWithoutFaculdadeInput, usuarioUncheckedUpdateWithoutFaculdadeInput>
+  }
+
+  export type usuarioUpdateManyWithWhereWithoutFaculdadeInput = {
+    where: usuarioScalarWhereInput
+    data: XOR<usuarioUpdateManyMutationInput, usuarioUncheckedUpdateManyWithoutFaculdadeInput>
+  }
+
+  export type usuarioScalarWhereInput = {
+    AND?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    OR?: usuarioScalarWhereInput[]
+    NOT?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    id?: StringFilter<"usuario"> | string
+    nome?: StringFilter<"usuario"> | string
+    usuario?: StringFilter<"usuario"> | string
+    email?: StringFilter<"usuario"> | string
+    senha?: StringFilter<"usuario"> | string
+    faculdade_id?: StringNullableFilter<"usuario"> | string | null
+    idioma?: StringFilter<"usuario"> | string
+    data_registro?: DateTimeFilter<"usuario"> | Date | string
+    xp_total?: IntFilter<"usuario"> | number
+    sequencia_atual?: IntFilter<"usuario"> | number
+    sequencia_recorde?: IntFilter<"usuario"> | number
   }
 
   export type mindcardCreateManyUsuarioInput = {
@@ -11565,6 +11931,62 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     texto?: StringFieldUpdateOperationsInput | string
     correta?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type usuarioCreateManyFaculdadeInput = {
+    id?: string
+    nome: string
+    usuario: string
+    email: string
+    senha: string
+    idioma?: string
+    data_registro?: Date | string
+    xp_total?: number
+    sequencia_atual?: number
+    sequencia_recorde?: number
+  }
+
+  export type usuarioUpdateWithoutFaculdadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    usuario?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    idioma?: StringFieldUpdateOperationsInput | string
+    data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
+    xp_total?: IntFieldUpdateOperationsInput | number
+    sequencia_atual?: IntFieldUpdateOperationsInput | number
+    sequencia_recorde?: IntFieldUpdateOperationsInput | number
+    mindcards?: mindcardUpdateManyWithoutUsuarioNestedInput
+    praticas?: praticaUpdateManyWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateWithoutFaculdadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    usuario?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    idioma?: StringFieldUpdateOperationsInput | string
+    data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
+    xp_total?: IntFieldUpdateOperationsInput | number
+    sequencia_atual?: IntFieldUpdateOperationsInput | number
+    sequencia_recorde?: IntFieldUpdateOperationsInput | number
+    mindcards?: mindcardUncheckedUpdateManyWithoutUsuarioNestedInput
+    praticas?: praticaUncheckedUpdateManyWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutFaculdadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    usuario?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    idioma?: StringFieldUpdateOperationsInput | string
+    data_registro?: DateTimeFieldUpdateOperationsInput | Date | string
+    xp_total?: IntFieldUpdateOperationsInput | number
+    sequencia_atual?: IntFieldUpdateOperationsInput | number
+    sequencia_recorde?: IntFieldUpdateOperationsInput | number
   }
 
 

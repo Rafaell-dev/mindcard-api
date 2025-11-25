@@ -10,7 +10,7 @@ export class PrismaUserMapper {
       email: user.email,
       nome: user.nome,
       senha: user.senha,
-      faculdade: user.faculdade,
+      faculdade_id: user.faculdadeId,
       idioma: user.idioma,
       data_registro: user.dataRegistro,
       xp_total: user.xpTotal,
@@ -30,7 +30,7 @@ export class PrismaUserMapper {
     }
     if (user.nome !== undefined) partial.nome = user.nome;
     if (user.senha !== undefined) partial.senha = user.senha;
-    if (user.faculdade !== undefined) partial.faculdade = user.faculdade;
+    if (user.faculdadeId !== undefined) partial.faculdade_id = user.faculdadeId;
     if (user.idioma !== undefined) partial.idioma = user.idioma;
     if (user.dataRegistro !== undefined)
       partial.data_registro = user.dataRegistro;
@@ -43,13 +43,16 @@ export class PrismaUserMapper {
     return partial;
   }
 
-  static toDomain(user: PrismaUser): User {
+  static toDomain(
+    user: PrismaUser & { faculdade?: { nome: string } | null },
+  ): User {
     return new User({
       id: user.id,
       email: user.email,
       nome: user.nome,
       senha: user.senha,
-      faculdade: user.faculdade ?? '',
+      faculdadeId: user.faculdade_id ?? '',
+      faculdadeNome: user.faculdade?.nome,
       idioma: user.idioma,
       dataRegistro: user.data_registro,
       xpTotal: user.xp_total,

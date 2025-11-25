@@ -31,14 +31,14 @@ export class CreateUserBody {
   senha: string;
 
   @ApiProperty({
-    description: 'Nome da faculdade/universidade (opcional)',
-    example: 'Universidade Federal do Brasil',
+    description: 'ID da faculdade/universidade (opcional)',
+    example: '019a8588-9582-72f8-ac5e-231e942f52d9',
     type: String,
     required: false,
   })
   @IsOptional()
   @IsString()
-  faculdade?: string;
+  faculdadeId?: string;
 
   @ApiProperty({
     description: 'Idioma preferido (opcional)',

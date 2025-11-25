@@ -8,7 +8,7 @@ interface CreateUserRequest {
   email: string;
   nome: string;
   senha: string;
-  faculdade?: string;
+  faculdadeId?: string;
   idioma?: string;
 }
 
@@ -16,7 +16,13 @@ interface CreateUserRequest {
 export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async execute({ email, nome, senha, faculdade, idioma }: CreateUserRequest) {
+  async execute({
+    email,
+    nome,
+    senha,
+    faculdadeId,
+    idioma,
+  }: CreateUserRequest) {
     const userAlreadyExist = await this.userRepository.findByEmail(email);
 
     if (userAlreadyExist) throw new UserWithSameEmailException();
@@ -27,7 +33,7 @@ export class CreateUserUseCase {
       email,
       nome,
       senha: hashedPassword,
-      faculdade: faculdade ?? '',
+      faculdadeId: faculdadeId ?? '',
       idioma: idioma ?? 'pt-BR',
       dataRegistro: new Date(),
       xpTotal: 0,

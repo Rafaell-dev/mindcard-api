@@ -33,6 +33,13 @@ export class PrismaUserRepository implements UserRepository {
       where: {
         id,
       },
+      include: {
+        faculdade: {
+          select: {
+            nome: true,
+          },
+        },
+      },
     });
 
     if (!user) return null;

@@ -9,17 +9,18 @@ datasource db {
 }
 
 model usuario {
-  id                String   @id @default(cuid())
+  id                String     @id @default(cuid())
   nome              String
-  usuario           String   @unique
-  email             String   @unique
+  usuario           String     @unique
+  email             String     @unique
   senha             String
-  faculdade         String?
-  idioma            String   @default("pt-BR")
-  data_registro     DateTime @default(now())
-  xp_total          Int      @default(0)
-  sequencia_atual   Int      @default(0)
-  sequencia_recorde Int      @default(0)
+  faculdade_id      String?
+  faculdade         faculdade? @relation(fields: [faculdade_id], references: [id])
+  idioma            String     @default("pt-BR")
+  data_registro     DateTime   @default(now())
+  xp_total          Int        @default(0)
+  sequencia_atual   Int        @default(0)
+  sequencia_recorde Int        @default(0)
 
   mindcards mindcard[]
   praticas  pratica[]
@@ -139,6 +140,7 @@ model faculdade {
   municipio             String
   uf                    String
   situacao              SituacaoIES
+  usuarios              usuario[]
 
   @@index([nome])
   @@index([sigla])

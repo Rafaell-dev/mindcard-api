@@ -8,7 +8,7 @@ export const makeUser = (override: Override = {}) => {
     email: override.email ?? 'email@gmail.com',
     senha: override.senha ?? '123123',
     nome: override.nome ?? 'Vitor',
-    faculdade: override.faculdade ?? 'Faculdade XPTO',
+    faculdadeId: override.faculdadeId ?? 'cmi5fjage019l8zagt4p1vtsh',
     idioma: override.idioma ?? 'pt-BR',
     dataRegistro: override.dataRegistro ?? new Date(),
     xpTotal: override.xpTotal ?? 0,

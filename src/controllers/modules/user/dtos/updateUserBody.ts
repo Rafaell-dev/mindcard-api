@@ -11,7 +11,7 @@ export class UpdateUserRequest {
   senha?: string;
 
   @IsOptional()
-  faculdade?: string;
+  faculdadeId?: string;
 
   @IsOptional()
   idioma?: string;

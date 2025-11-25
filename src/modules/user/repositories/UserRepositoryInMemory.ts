@@ -45,7 +45,7 @@ export class UserRepositoryInMemory implements UserRepository {
       email: currentUser.email,
       senha: currentUser.senha,
       nome: currentUser.nome,
-      faculdade: currentUser.faculdade,
+      faculdadeId: currentUser.faculdadeId,
       idioma: currentUser.idioma,
       dataRegistro: currentUser.dataRegistro,
       xpTotal: currentUser.xpTotal,
