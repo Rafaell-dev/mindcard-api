@@ -1,5 +1,6 @@
 import { User, type UserProps } from '../entities/User';
 import { UserRepository } from './UserRepository';
+import { OAuthProfile } from 'src/modules/auth/interfaces';
 
 export class UserRepositoryInMemory implements UserRepository {
   public users: User[] = [];
@@ -19,6 +20,25 @@ export class UserRepositoryInMemory implements UserRepository {
     const user = this.users.find((user) => user.id === id);
 
     return Promise.resolve(user ?? null);
+  }
+
+  findByGoogleId(googleId: string): Promise<User | null> {
+    const user = this.users.find((user) => user.googleId === googleId);
+
+    return Promise.resolve(user ?? null);
+  }
+
+  createOAuthUser(profile: OAuthProfile): Promise<User> {
+    const newUser = new User({
+      email: profile.email,
+      nome: profile.nome,
+      googleId: profile.googleId,
+      avatarUrl: profile.avatarUrl,
+      provider: 'google',
+    });
+
+    this.users.push(newUser);
+    return Promise.resolve(newUser);
   }
 
   updateById(id: string, user: Partial<UserProps>): Promise<User | null> {
@@ -46,6 +66,9 @@ export class UserRepositoryInMemory implements UserRepository {
       senha: currentUser.senha,
       nome: currentUser.nome,
       faculdadeId: currentUser.faculdadeId,
+      googleId: currentUser.googleId,
+      provider: currentUser.provider,
+      avatarUrl: currentUser.avatarUrl,
       idioma: currentUser.idioma,
       dataRegistro: currentUser.dataRegistro,
       xpTotal: currentUser.xpTotal,

@@ -5,7 +5,7 @@ import {
 import {
   Prisma,
   type mindcard as PrismaMindcard,
-} from 'prisma/generated/prisma';
+} from 'prisma/generated/client.js';
 
 export class PrismaMindcardMapper {
   static toPrisma(mindcard: Mindcard): Prisma.mindcardCreateInput {

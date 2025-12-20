@@ -3,6 +3,7 @@ import { User, type UserProps } from 'src/modules/user/entities/User';
 import { UserRepository } from 'src/modules/user/repositories/UserRepository';
 import { PrismaUserMapper } from '../mappers/PrismaUserMapper';
 import { PrismaService } from '../prisma.service';
+import { OAuthProfile } from 'src/modules/auth/interfaces';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -45,6 +46,43 @@ export class PrismaUserRepository implements UserRepository {
     if (!user) return null;
 
     return PrismaUserMapper.toDomain(user);
+  }
+
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    const user = await this.prisma.usuario.findUnique({
+      where: {
+        google_id: googleId,
+      },
+      include: {
+        faculdade: {
+          select: {
+            nome: true,
+          },
+        },
+      },
+    });
+
+    if (!user) return null;
+
+    return PrismaUserMapper.toDomain(user);
+  }
+
+  async createOAuthUser(profile: OAuthProfile): Promise<User> {
+    const newUser = new User({
+      email: profile.email,
+      nome: profile.nome,
+      googleId: profile.googleId,
+      avatarUrl: profile.avatarUrl,
+      provider: 'google',
+    });
+
+    const userRaw = PrismaUserMapper.toPrisma(newUser);
+
+    await this.prisma.usuario.create({
+      data: userRaw,
+    });
+
+    return newUser;
   }
 
   async updateById(id: string, user: Partial<UserProps>): Promise<User | null> {

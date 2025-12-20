@@ -1,5 +1,5 @@
 import { User, type UserProps } from 'src/modules/user/entities/User';
-import type { usuario as PrismaUser } from 'prisma/generated/prisma';
+import type { usuario as PrismaUser } from 'prisma/generated/client.js';
 
 const resolveUsername = (email: string) => email;
 
@@ -9,14 +9,17 @@ export class PrismaUserMapper {
       id: user.id,
       email: user.email,
       nome: user.nome,
-      senha: user.senha,
-      faculdade_id: user.faculdadeId,
+      senha: user.senha ?? null,
+      faculdade_id: user.faculdadeId ?? null,
       idioma: user.idioma,
       data_registro: user.dataRegistro,
       xp_total: user.xpTotal,
       sequencia_atual: user.sequenciaAtual,
       sequencia_recorde: user.sequenciaRecorde,
-      usuario: resolveUsername(user.email),
+      usuario: user.usuario ?? resolveUsername(user.email),
+      google_id: user.googleId ?? null,
+      provider: user.provider,
+      avatar_url: user.avatarUrl ?? null,
     };
   }
 
@@ -39,6 +42,9 @@ export class PrismaUserMapper {
       partial.sequencia_atual = user.sequenciaAtual;
     if (user.sequenciaRecorde !== undefined)
       partial.sequencia_recorde = user.sequenciaRecorde;
+    if (user.googleId !== undefined) partial.google_id = user.googleId;
+    if (user.provider !== undefined) partial.provider = user.provider;
+    if (user.avatarUrl !== undefined) partial.avatar_url = user.avatarUrl;
 
     return partial;
   }
@@ -50,9 +56,13 @@ export class PrismaUserMapper {
       id: user.id,
       email: user.email,
       nome: user.nome,
-      senha: user.senha,
-      faculdadeId: user.faculdade_id ?? '',
+      senha: user.senha ?? undefined,
+      usuario: user.usuario,
+      faculdadeId: user.faculdade_id ?? undefined,
       faculdadeNome: user.faculdade?.nome,
+      googleId: user.google_id ?? undefined,
+      provider: user.provider,
+      avatarUrl: user.avatar_url ?? undefined,
       idioma: user.idioma,
       dataRegistro: user.data_registro,
       xpTotal: user.xp_total,

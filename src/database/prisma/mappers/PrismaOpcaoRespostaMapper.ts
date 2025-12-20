@@ -1,4 +1,4 @@
-import { Prisma } from 'prisma/generated/prisma';
+import { Prisma } from 'prisma/generated/client.js';
 import { OpcaoResposta } from 'src/modules/card/entities/OpcaoResposta';
 
 export class PrismaOpcaoRespostaMapper {

@@ -1,11 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./generated/prisma"
+  provider = "prisma-client"
+  output   = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model usuario {
@@ -13,7 +12,10 @@ model usuario {
   nome              String
   usuario           String     @unique
   email             String     @unique
-  senha             String
+  senha             String?
+  google_id         String?    @unique
+  provider          String     @default("local")
+  avatar_url        String?
   faculdade_id      String?
   faculdade         faculdade? @relation(fields: [faculdade_id], references: [id])
   idioma            String     @default("pt-BR")
@@ -28,6 +30,7 @@ model usuario {
   @@index([email])
   @@index([usuario])
   @@index([xp_total])
+  @@index([google_id])
 }
 
 model mindcard {

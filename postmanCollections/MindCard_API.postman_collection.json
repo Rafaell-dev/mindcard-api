@@ -7,6 +7,144 @@
   },
   "item": [
     {
+      "name": "🔐 Autenticação",
+      "item": [
+        {
+          "name": "Login com Email/Senha",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('accessToken', response.accessToken);",
+                  "    pm.test('Login realizado com sucesso', () => {",
+                  "        pm.expect(response).to.have.property('accessToken');",
+                  "        pm.expect(response).to.have.property('user');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@email.com\",\n  \"senha\": \"senha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Autentica o usuário com email e senha e retorna um token JWT.\n\n**Campos obrigatórios:**\n- `email`: Email válido do usuário\n- `senha`: Senha de acesso (mínimo 6 caracteres)\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIs...\",\n  \"user\": {\n    \"id\": \"01JCQR...\",\n    \"email\": \"usuario@email.com\",\n    \"nome\": \"Nome do Usuário\"\n  }\n}\n```"
+          },
+          "response": [
+            {
+              "name": "Sucesso - Login",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"senha\": \"senha123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMUpDUVIuLi4iLCJlbWFpbCI6ImpvYW8uc2lsdmFAZXhhbXBsZS5jb20iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTcwMDA4NjQwMH0.xxx\",\n  \"user\": {\n    \"id\": \"01JCQR5H8K9M0N1P2Q3R4S5T6U\",\n    \"email\": \"joao.silva@example.com\",\n    \"nome\": \"João Silva\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login com Google",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            },
+            "description": "Inicia o fluxo de autenticação OAuth com Google.\n\n**Comportamento:**\nRedireciona o usuário para a página de login do Google.\n\n**⚠️ Nota:** Este endpoint deve ser acessado diretamente no navegador, não via Postman.\n\n**Resposta:** 302 Redirect para Google OAuth"
+          },
+          "response": []
+        },
+        {
+          "name": "Callback Google OAuth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google", "callback"]
+            },
+            "description": "Callback que recebe a resposta do Google OAuth.\n\n**⚠️ Nota:** Este endpoint é chamado automaticamente pelo Google após a autenticação.\n\n**Comportamento:**\nRedireciona para o frontend com o token JWT na query string:\n`{FRONTEND_URL}?token={accessToken}`\n\n**Resposta:** 302 Redirect com token"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Perfil do Usuário",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/perfil",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "perfil"]
+            },
+            "description": "Retorna os dados do usuário autenticado via token JWT.\n\n**Autenticação:** Bearer Token (JWT)\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"usuario@email.com\",\n  \"nome\": \"Nome do Usuário\"\n}\n```\n\n**Erro:** 401 - Token inválido ou expirado"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de autenticação da API MindCard.\n\nSuporta login tradicional com email/senha e OAuth com Google.\n\n**Token JWT:**\nApós login bem-sucedido, um token JWT é retornado e deve ser incluído no header `Authorization: Bearer {token}` para acessar endpoints protegidos."
+    },
+    {
       "name": "👤 Usuários",
       "item": [
         {
@@ -766,6 +904,11 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:3002/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
       "type": "string"
     },
     {
