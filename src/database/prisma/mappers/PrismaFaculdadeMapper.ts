@@ -1,5 +1,5 @@
 import { Faculdade } from 'src/modules/faculdade/entities/Faculdade';
-import type { faculdade as PrismaFaculdade } from 'prisma/generated/client.js';
+import type { faculdade as PrismaFaculdade } from '@prisma/client';
 
 export class PrismaFaculdadeMapper {
   static toDomain(raw: PrismaFaculdade): Faculdade {
