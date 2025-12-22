@@ -4,6 +4,7 @@ import { UserModule } from './controllers/modules/user/user.module';
 import { MindcardModule } from './controllers/modules/mindcard/mindcard.module';
 import { CardModule } from './controllers/modules/card/card.module';
 import { FaculdadeModule } from './modules/faculdade/faculdade.module';
+import { AuthModule } from './modules/auth/authModule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { R2Module } from './r2/r2.module';
 import { GeminiModule } from './gemini/gemini.module';
@@ -13,7 +14,10 @@ import r2Config from './config/r2.config';
 import geminiConfig from './config/gemini.config';
 import redisConfig from './config/redis.config';
 import queueConfig from './config/queue.config';
+import jwtConfig from './config/jwt.config';
+import googleOAuthConfig from './config/google-oauth.config';
 // import { APP_GUARD } from '@nestjs/core';
+// import { JwtAuthGuard } from './modules/auth/guards';
 
 @Module({
   imports: [
@@ -23,9 +27,17 @@ import queueConfig from './config/queue.config';
     MindcardModule,
     CardModule,
     FaculdadeModule,
+    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [r2Config, geminiConfig, redisConfig, queueConfig],
+      load: [
+        r2Config,
+        geminiConfig,
+        redisConfig,
+        queueConfig,
+        jwtConfig,
+        googleOAuthConfig,
+      ],
     }),
     R2Module,
     QueueModule,
@@ -43,6 +55,7 @@ import queueConfig from './config/queue.config';
   ],
   controllers: [],
   providers: [
+    // Uncomment the following to protect all routes with JWT by default
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard,

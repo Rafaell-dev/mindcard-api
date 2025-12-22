@@ -2,10 +2,7 @@ import {
   Mindcard,
   type MindcardProps,
 } from 'src/modules/mindcard/entities/Mindcard';
-import {
-  Prisma,
-  type mindcard as PrismaMindcard,
-} from 'prisma/generated/prisma';
+import { Prisma, type mindcard as PrismaMindcard } from '@prisma/client';
 
 export class PrismaMindcardMapper {
   static toPrisma(mindcard: Mindcard): Prisma.mindcardCreateInput {
