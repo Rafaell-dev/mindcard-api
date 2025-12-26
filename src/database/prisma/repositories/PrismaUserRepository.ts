@@ -99,4 +99,8 @@ export class PrismaUserRepository implements UserRepository {
 
     return PrismaUserMapper.toDomain(updatedUser);
   }
+
+  async countUsers(): Promise<number> {
+    return this.prisma.usuario.count();
+  }
 }

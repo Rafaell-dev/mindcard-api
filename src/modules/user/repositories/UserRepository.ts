@@ -11,4 +11,5 @@ export abstract class UserRepository {
     id: string,
     user: Partial<UserProps>,
   ): Promise<User | null>;
+  abstract countUsers(): Promise<number>;
 }

@@ -18,7 +18,6 @@ export class CreateUserBody {
   })
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   nome: string;
 
   @ApiProperty({

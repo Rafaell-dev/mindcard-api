@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserRepository } from '../../repositories/UserRepository';
 import { User } from '../../entities/User';
 import { hash } from 'bcrypt';
@@ -16,6 +16,8 @@ interface CreateUserRequest {
 
 @Injectable()
 export class CreateUserUseCase {
+  private readonly logger = new Logger(CreateUserUseCase.name);
+
   constructor(
     private userRepository: UserRepository,
     private faculdadeRepository: FaculdadeRepository,
@@ -41,9 +43,14 @@ export class CreateUserUseCase {
 
     const hashedPassword = await hash(senha, 10);
 
+    const defaultNome = nome || email.split('@')[0];
+    const totalUsers = await this.userRepository.countUsers();
+    const usuario = `user_${totalUsers + 1}`;
+
     const user = new User({
       email,
-      nome,
+      nome: defaultNome,
+      usuario,
       senha: hashedPassword,
       faculdadeId: faculdadeId ?? undefined,
       idioma: idioma ?? 'pt-BR',

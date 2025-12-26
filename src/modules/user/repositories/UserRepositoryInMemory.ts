@@ -83,4 +83,8 @@ export class UserRepositoryInMemory implements UserRepository {
 
     return Promise.resolve(updatedUser);
   }
+
+  countUsers(): Promise<number> {
+    return Promise.resolve(this.users.length);
+  }
 }
