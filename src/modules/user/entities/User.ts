@@ -4,7 +4,7 @@ export interface UserProps {
   id?: string;
   email: string;
   senha?: string;
-  nome: string;
+  nome?: string;
   usuario?: string;
   faculdadeId?: string;
   faculdadeNome?: string;
@@ -22,7 +22,7 @@ export class User {
   readonly id: string;
   email: string;
   senha?: string;
-  nome: string;
+  nome?: string;
   usuario?: string;
   faculdadeId?: string;
   faculdadeNome?: string;

@@ -4,3 +4,4 @@ export * from './ConflictException';
 export * from './appException';
 export * from './GeminiApiException';
 export * from './GeminiRateLimitException';
+export * from './FaculdadeNotFoundException';

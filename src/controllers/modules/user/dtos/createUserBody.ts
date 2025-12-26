@@ -16,6 +16,7 @@ export class CreateUserBody {
     example: 'João Silva',
     type: String,
   })
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   nome: string;

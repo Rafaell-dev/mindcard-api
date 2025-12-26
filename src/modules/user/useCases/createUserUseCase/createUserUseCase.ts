@@ -3,6 +3,8 @@ import { UserRepository } from '../../repositories/UserRepository';
 import { User } from '../../entities/User';
 import { hash } from 'bcrypt';
 import { UserWithSameEmailException } from '../../exceptions/UserWithSameEmailException';
+import { FaculdadeRepository } from '../../../faculdade/repositories/FaculdadeRepository';
+import { FaculdadeNotFoundException } from '../../../../exceptions/FaculdadeNotFoundException';
 
 interface CreateUserRequest {
   email: string;
@@ -14,7 +16,10 @@ interface CreateUserRequest {
 
 @Injectable()
 export class CreateUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private faculdadeRepository: FaculdadeRepository,
+  ) {}
 
   async execute({
     email,
@@ -27,13 +32,20 @@ export class CreateUserUseCase {
 
     if (userAlreadyExist) throw new UserWithSameEmailException();
 
+    if (faculdadeId) {
+      const faculdade = await this.faculdadeRepository.findById(faculdadeId);
+      if (!faculdade) {
+        throw new FaculdadeNotFoundException();
+      }
+    }
+
     const hashedPassword = await hash(senha, 10);
 
     const user = new User({
       email,
       nome,
       senha: hashedPassword,
-      faculdadeId: faculdadeId ?? '',
+      faculdadeId: faculdadeId ?? undefined,
       idioma: idioma ?? 'pt-BR',
       dataRegistro: new Date(),
       xpTotal: 0,

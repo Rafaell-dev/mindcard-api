@@ -5,7 +5,7 @@ class UserResponse {
   id: string;
 
   @ApiProperty({ description: 'Nome do usuário' })
-  nome: string;
+  nome?: string;
 
   @ApiProperty({ description: 'Email do usuário' })
   email: string;

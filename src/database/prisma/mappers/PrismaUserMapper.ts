@@ -8,7 +8,7 @@ export class PrismaUserMapper {
     return {
       id: user.id,
       email: user.email,
-      nome: user.nome,
+      nome: user.nome ?? null,
       senha: user.senha ?? null,
       faculdade_id: user.faculdadeId ?? null,
       idioma: user.idioma,
@@ -55,7 +55,7 @@ export class PrismaUserMapper {
     return new User({
       id: user.id,
       email: user.email,
-      nome: user.nome,
+      nome: user.nome ?? undefined,
       senha: user.senha ?? undefined,
       usuario: user.usuario,
       faculdadeId: user.faculdade_id ?? undefined,

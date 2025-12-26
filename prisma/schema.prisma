@@ -8,7 +8,7 @@ datasource db {
 
 model usuario {
   id                String     @id @default(cuid())
-  nome              String
+  nome              String?
   usuario           String     @unique
   email             String     @unique
   senha             String?
