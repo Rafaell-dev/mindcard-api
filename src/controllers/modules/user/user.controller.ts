@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Patch, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Patch,
+  Get,
+  Delete,
+  Param,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { IsPublic } from 'src/modules/auth/decorators/isPublicDecorator';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateUserUseCase } from 'src/modules/user/useCases/createUserUseCase/createUserUseCase';
@@ -6,6 +16,7 @@ import { CreateUserBody } from './dtos/createUserBody';
 import { UserViewModel } from './viewModel/userViewModel';
 import { UpdateUserByIdUseCase } from 'src/modules/user/useCases/updateUserUseCase/updateUserByIdUseCase';
 import { FindByIdUserUseCase } from 'src/modules/user/useCases/findByIdUserUseCase/findByIdUserUseCase';
+import { DeleteUserUseCase } from 'src/modules/user/useCases/deleteUserUseCase/deleteUserUseCase';
 import { UpdateUserRequest } from './dtos/updateUserBody';
 
 @ApiTags('Usuário')
@@ -15,6 +26,7 @@ export class UserController {
     private createUserUseCase: CreateUserUseCase,
     private updateUserByIdUseCase: UpdateUserByIdUseCase,
     private findUserByIdUseCase: FindByIdUserUseCase,
+    private deleteUserUseCase: DeleteUserUseCase,
   ) {}
 
   @IsPublic()
@@ -107,5 +119,29 @@ export class UserController {
     if (updatedUser) {
       return UserViewModel.toHttp(updatedUser);
     }
+  }
+
+  @Delete('deletar/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Deletar usuário (LGPD)',
+    description:
+      'Remove permanentemente um usuário e todos os seus dados pessoais do sistema. ' +
+      'Esta operação não pode ser desfeita e está em conformidade com o Art. 18, VI da LGPD ' +
+      '(direito de eliminação dos dados pessoais). Todos os mindcards, cards, práticas ' +
+      'e demais dados associados ao usuário serão removidos.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID do usuário a ser deletado (UUID v7)',
+    example: '019a8588-9582-72f8-ac5e-231e942f52d9',
+  })
+  @ApiResponse({
+    status: 204,
+    description: 'Usuário e todos os seus dados foram removidos com sucesso',
+  })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async deleteUser(@Param('userId') userId: string): Promise<void> {
+    await this.deleteUserUseCase.execute(userId);
   }
 }

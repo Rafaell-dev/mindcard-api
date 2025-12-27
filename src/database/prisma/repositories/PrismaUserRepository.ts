@@ -103,4 +103,64 @@ export class PrismaUserRepository implements UserRepository {
   async countUsers(): Promise<number> {
     return this.prisma.usuario.count();
   }
+
+  /**
+   * Deleta um usuário e todos os seus dados relacionados (LGPD - Art. 18, VI).
+   * A deleção é feita em cascata, removendo:
+   * - Opções de resposta dos cards
+   * - Cards dos mindcards
+   * - Mindcards do usuário
+   * - Práticas do usuário
+   * - Respostas de onboarding do usuário
+   * - O próprio usuário
+   */
+  async delete(id: string): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Buscar todos os mindcards do usuário
+      const mindcards = await tx.mindcard.findMany({
+        where: { usuario_id: id },
+        select: { id: true },
+      });
+
+      const mindcardIds = mindcards.map((m) => m.id);
+
+      // 2. Buscar todos os cards dos mindcards
+      const cards = await tx.card.findMany({
+        where: { mindcard_id: { in: mindcardIds } },
+        select: { id: true },
+      });
+
+      const cardIds = cards.map((c) => c.id);
+
+      // 3. Deletar opções de resposta dos cards
+      await tx.opcao_resposta.deleteMany({
+        where: { card_id: { in: cardIds } },
+      });
+
+      // 4. Deletar cards
+      await tx.card.deleteMany({
+        where: { id: { in: cardIds } },
+      });
+
+      // 5. Deletar práticas do usuário
+      await tx.pratica.deleteMany({
+        where: { usuario_id: id },
+      });
+
+      // 6. Deletar mindcards do usuário
+      await tx.mindcard.deleteMany({
+        where: { usuario_id: id },
+      });
+
+      // 7. Deletar respostas de onboarding (já tem onDelete: Cascade, mas garantimos aqui)
+      await tx.resposta_onboarding.deleteMany({
+        where: { usuario_id: id },
+      });
+
+      // 8. Finalmente, deletar o usuário
+      await tx.usuario.delete({
+        where: { id },
+      });
+    });
+  }
 }

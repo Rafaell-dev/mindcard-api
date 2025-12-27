@@ -12,4 +12,5 @@ export abstract class UserRepository {
     user: Partial<UserProps>,
   ): Promise<User | null>;
   abstract countUsers(): Promise<number>;
+  abstract delete(id: string): Promise<void>;
 }
