@@ -17,9 +17,10 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { AuthService, ValidatedUser } from './authService';
-import { LocalAuthGuard, JwtAuthGuard, GoogleAuthGuard } from './guards';
+import { LocalAuthGuard, GoogleAuthGuard } from './guards';
 import { AuthResponseDto, LoginDto } from './dtos';
 import { CurrentUser } from './decorators';
+import { IsPublic } from './decorators/isPublicDecorator';
 import type { AuthenticatedUser } from './decorators';
 import { User } from '../user/entities/User';
 
@@ -42,6 +43,7 @@ interface OAuthRequest {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @IsPublic()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
@@ -60,6 +62,7 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @IsPublic()
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({
@@ -72,6 +75,7 @@ export class AuthController {
     // O guard redireciona para o Google automaticamente
   }
 
+  @IsPublic()
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({
@@ -97,7 +101,6 @@ export class AuthController {
   }
 
   @Get('perfil')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Obter perfil do usuário autenticado',

@@ -16,8 +16,8 @@ import redisConfig from './config/redis.config';
 import queueConfig from './config/queue.config';
 import jwtConfig from './config/jwt.config';
 import googleOAuthConfig from './config/google-oauth.config';
-// import { APP_GUARD } from '@nestjs/core';
-// import { JwtAuthGuard } from './modules/auth/guards';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guards';
 
 @Module({
   imports: [
@@ -56,10 +56,10 @@ import googleOAuthConfig from './config/google-oauth.config';
   controllers: [],
   providers: [
     // Uncomment the following to protect all routes with JWT by default
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule {}

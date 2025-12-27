@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Patch, Get, Param } from '@nestjs/common';
+import { IsPublic } from 'src/modules/auth/decorators/isPublicDecorator';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateUserUseCase } from 'src/modules/user/useCases/createUserUseCase/createUserUseCase';
 import { CreateUserBody } from './dtos/createUserBody';
@@ -16,6 +17,7 @@ export class UserController {
     private findUserByIdUseCase: FindByIdUserUseCase,
   ) {}
 
+  @IsPublic()
   @Post('cadastrar')
   @ApiOperation({
     summary: 'Cadastrar novo usuário',
