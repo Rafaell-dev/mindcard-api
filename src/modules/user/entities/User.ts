@@ -12,6 +12,9 @@ export interface UserProps {
   provider?: string;
   avatarUrl?: string;
   idioma?: string;
+  celular?: string;
+  dataNascimento?: Date;
+  onboardingCompleto?: boolean;
   dataRegistro?: Date;
   xpTotal?: number;
   sequenciaAtual?: number;
@@ -30,6 +33,9 @@ export class User {
   provider: string;
   avatarUrl?: string;
   idioma: string;
+  celular?: string;
+  dataNascimento?: Date;
+  onboardingCompleto: boolean;
   readonly dataRegistro: Date;
   xpTotal: number;
   sequenciaAtual: number;
@@ -47,6 +53,9 @@ export class User {
     this.provider = props.provider ?? 'local';
     this.avatarUrl = props.avatarUrl;
     this.idioma = props.idioma ?? 'pt-BR';
+    this.celular = props.celular;
+    this.dataNascimento = props.dataNascimento;
+    this.onboardingCompleto = props.onboardingCompleto ?? false;
     this.dataRegistro = props.dataRegistro ?? new Date();
     this.xpTotal = props.xpTotal ?? 0;
     this.sequenciaAtual = props.sequenciaAtual ?? 0;

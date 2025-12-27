@@ -5,6 +5,7 @@ import { MindcardModule } from './controllers/modules/mindcard/mindcard.module';
 import { CardModule } from './controllers/modules/card/card.module';
 import { FaculdadeModule } from './modules/faculdade/faculdade.module';
 import { AuthModule } from './modules/auth/authModule';
+import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { R2Module } from './r2/r2.module';
 import { GeminiModule } from './gemini/gemini.module';
@@ -28,6 +29,7 @@ import { JwtAuthGuard } from './modules/auth/guards';
     CardModule,
     FaculdadeModule,
     AuthModule,
+    OnboardingModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

@@ -12,6 +12,9 @@ class UserResponse {
 
   @ApiProperty({ description: 'URL do avatar', required: false })
   avatarUrl?: string;
+
+  @ApiProperty({ description: 'Onboarding completo', default: false })
+  onboardingCompleto: boolean;
 }
 
 export class AuthResponseDto {

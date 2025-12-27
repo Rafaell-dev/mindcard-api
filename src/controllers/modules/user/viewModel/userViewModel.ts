@@ -14,6 +14,7 @@ export class UserViewModel {
       xpTotal: data.xpTotal,
       sequenciaAtual: data.sequenciaAtual,
       sequenciaRecorde: data.sequenciaRecorde,
+      onboardingCompleto: data.onboardingCompleto,
     };
   }
 }

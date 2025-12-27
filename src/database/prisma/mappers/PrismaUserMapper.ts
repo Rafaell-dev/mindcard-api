@@ -20,6 +20,9 @@ export class PrismaUserMapper {
       google_id: user.googleId ?? null,
       provider: user.provider,
       avatar_url: user.avatarUrl ?? null,
+      celular: user.celular ?? null,
+      data_nascimento: user.dataNascimento ?? null,
+      onboarding_completo: user.onboardingCompleto,
     };
   }
 
@@ -45,6 +48,11 @@ export class PrismaUserMapper {
     if (user.googleId !== undefined) partial.google_id = user.googleId;
     if (user.provider !== undefined) partial.provider = user.provider;
     if (user.avatarUrl !== undefined) partial.avatar_url = user.avatarUrl;
+    if (user.celular !== undefined) partial.celular = user.celular;
+    if (user.dataNascimento !== undefined)
+      partial.data_nascimento = user.dataNascimento;
+    if (user.onboardingCompleto !== undefined)
+      partial.onboarding_completo = user.onboardingCompleto;
 
     return partial;
   }
@@ -64,6 +72,9 @@ export class PrismaUserMapper {
       provider: user.provider,
       avatarUrl: user.avatar_url ?? undefined,
       idioma: user.idioma,
+      celular: user.celular ?? undefined,
+      dataNascimento: user.data_nascimento ?? undefined,
+      onboardingCompleto: user.onboarding_completo,
       dataRegistro: user.data_registro,
       xpTotal: user.xp_total,
       sequenciaAtual: user.sequencia_atual,

@@ -137,7 +137,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "perfil"]
             },
-            "description": "Retorna os dados do usuário autenticado via token JWT.\n\n**Autenticação:** Bearer Token (JWT)\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"usuario@email.com\",\n  \"nome\": \"Nome do Usuário\"\n}\n```\n\n**Erro:** 401 - Token inválido ou expirado"
+            "description": "Retorna os dados do usuário autenticado via token JWT.\n\n**Autenticação:** Bearer Token (JWT)\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"usuario@email.com\",\n  \"nome\": \"Nome do Usuário\",\n  \"onboardingCompleto\": false\n}\n```\n\n**Erro:** 401 - Token inválido ou expirado"
           },
           "response": []
         }
@@ -156,11 +156,22 @@
                 "exec": [
                   "if (pm.response.code === 201 || pm.response.code === 200) {",
                   "    const response = pm.response.json();",
-                  "    pm.environment.set('usuarioId', response.id);",
+                  "    ",
+                  "    // Salva o ID do usuário criado",
+                  "    if (response.id) {",
+                  "        pm.environment.set('usuarioId', response.id);",
+                  "        console.log('✅ Usuário criado com ID:', response.id);",
+                  "    }",
+                  "    ",
+                  "    // Testes de validação",
                   "    pm.test('Usuário criado com sucesso', () => {",
                   "        pm.expect(response).to.have.property('id');",
                   "        pm.expect(response).to.have.property('email');",
+                  "        pm.expect(response).to.have.property('usuario');",
+                  "        pm.expect(response.onboardingCompleto).to.equal(false);",
                   "    });",
+                  "    ",
+                  "    console.log('📝 Nome de usuário gerado:', response.usuario);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -178,7 +189,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"senha\": \"senha123\",\n  \"faculdade\": \"Universidade Federal\",\n  \"idioma\": \"pt-BR\"\n}",
+              "raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"senha\": \"senha123\",\n  \"celular\": \"11999999999\",\n  \"faculdadeId\": \"faculdade-id-aqui\",\n  \"idioma\": \"pt-BR\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -190,7 +201,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["usuario", "cadastrar"]
             },
-            "description": "Cria um novo usuário no sistema.\n\n**Campos obrigatórios:**\n- `email`: Email válido do usuário\n- `nome`: Nome completo\n- `senha`: Senha de acesso\n\n**Campos opcionais:**\n- `faculdade`: Nome da instituição de ensino\n- `idioma`: Idioma preferido (ex: pt-BR, en-US)\n\n**Resposta de sucesso:** 200/201\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"faculdade\": \"Universidade Federal\",\n  \"idioma\": \"pt-BR\",\n  \"dataRegistro\": \"2025-11-13T00:00:00.000Z\",\n  \"xpTotal\": 0,\n  \"sequenciaAtual\": 0,\n  \"sequenciaRecorde\": 0\n}\n```"
+            "description": "Cria um novo usuário no sistema.\n\n**Campos obrigatórios:**\n- `email`: Email válido do usuário\n- `senha`: Senha de acesso (mínimo 6 caracteres)\n\n**Campos opcionais:**\n- `nome`: Nome completo (se não fornecido, usa prefixo do email)\n- `celular`: Número de telefone celular\n- `faculdadeId`: ID da instituição de ensino\n- `idioma`: Idioma preferido (padrão: pt-BR)\n\n**Campos gerados automaticamente:**\n- `usuario`: Nome de usuário sequencial (user_1, user_2, etc.)\n- `onboarding_completo`: Flag de conclusão do onboarding (padrão: false)\n\n**Resposta de sucesso:** 200/201\n```json\n{\n  \"id\": \"01JCQR...\",\n  \"email\": \"joao.silva@example.com\",\n  \"nome\": \"João Silva\",\n  \"usuario\": \"user_1\",\n  \"celular\": \"11999999999\",\n  \"faculdadeId\": \"...\",\n  \"idioma\": \"pt-BR\",\n  \"onboardingCompleto\": false,\n  \"dataRegistro\": \"2025-11-13T00:00:00.000Z\",\n  \"xpTotal\": 0,\n  \"sequenciaAtual\": 0,\n  \"sequenciaRecorde\": 0\n}\n```"
           },
           "response": [
             {
@@ -230,6 +241,16 @@
         {
           "name": "Listar Usuário por ID",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -251,6 +272,16 @@
         {
           "name": "Listar Usuário por Email",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -272,6 +303,16 @@
         {
           "name": "Atualizar Usuário",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
             "header": [
               {
@@ -874,6 +915,89 @@
         }
       ],
       "description": "Endpoints para busca de instituições de ensino."
+    },
+    {
+      "name": "🎯 Onboarding",
+      "item": [
+        {
+          "name": "Listar Perguntas do Onboarding",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/onboarding/perguntas",
+              "host": ["{{baseUrl}}"],
+              "path": ["onboarding", "perguntas"]
+            },
+            "description": "Retorna todas as perguntas ativas do questionário de onboarding.\n\n**Autenticação:** Não requerida (rota pública)\n\n**Resposta de sucesso:** 200\n```json\n[\n  {\n    \"id\": \"pergunta-data-nascimento\",\n    \"ordem\": 1,\n    \"texto\": \"Qual é a sua data de nascimento?\",\n    \"tipoResposta\": \"DATA\",\n    \"obrigatoria\": true,\n    \"opcoes\": []\n  },\n  {\n    \"id\": \"pergunta-tipo-usuario\",\n    \"ordem\": 2,\n    \"texto\": \"Qual é o seu tipo de usuário?\",\n    \"tipoResposta\": \"MULTIPLA_ESCOLHA\",\n    \"obrigatoria\": true,\n    \"opcoes\": [\n      { \"id\": \"...\", \"texto\": \"Estudante\", \"valor\": \"ESTUDANTE\", \"ordem\": 1 },\n      { \"id\": \"...\", \"texto\": \"Professor\", \"valor\": \"PROFESSOR\", \"ordem\": 2 },\n      { \"id\": \"...\", \"texto\": \"Outro\", \"valor\": \"OUTRO\", \"ordem\": 3 }\n    ]\n  }\n]\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Salvar Respostas do Onboarding",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"respostas\": [\n    {\n      \"perguntaId\": \"pergunta-data-nascimento\",\n      \"respostaTexto\": \"2000-01-15\"\n    },\n    {\n      \"perguntaId\": \"pergunta-tipo-usuario\",\n      \"opcaoId\": \"opcao-estudante-id\"\n    },\n    {\n      \"perguntaId\": \"pergunta-objetivo-estudo\",\n      \"opcaoId\": \"opcao-enem-id\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/onboarding/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["onboarding", "responder"]
+            },
+            "description": "Salva as respostas do usuário ao questionário de onboarding e atualiza automaticamente a flag `onboarding_completo` quando todas as perguntas obrigatórias forem respondidas.\n\n**Autenticação:** Bearer Token (JWT)\n\n**Campos obrigatórios:**\n- `respostas`: Array de objetos com:\n  - `perguntaId`: ID da pergunta\n  - `respostaTexto`: Para perguntas do tipo DATA ou TEXTO_LIVRE\n  - `opcaoId`: Para perguntas do tipo MULTIPLA_ESCOLHA\n\n**Resposta de sucesso:** 201\n```json\n{\n  \"success\": true,\n  \"message\": \"Respostas salvas com sucesso\"\n}\n```\n\n**Erro:** 401 - Não autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Status do Onboarding",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/onboarding/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["onboarding", "status"]
+            },
+            "description": "Retorna o status de conclusão do onboarding do usuário autenticado.\n\n**Autenticação:** Bearer Token (JWT)\n\n**Resposta de sucesso:** 200\n```json\n{\n  \"completo\": true,\n  \"totalPerguntas\": 3,\n  \"perguntasRespondidas\": 3,\n  \"perguntasPendentes\": []\n}\n```\n\n**Erro:** 401 - Não autenticado"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para o questionário de onboarding de novos usuários.\n\nO onboarding coleta informações importantes como data de nascimento, tipo de usuário e objetivo de estudo. A flag `onboarding_completo` é automaticamente atualizada quando todas as perguntas obrigatórias são respondidas."
     }
   ],
   "event": [
@@ -882,8 +1006,33 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Pre-request script global",
-          "// Pode ser usado para adicionar autenticação, logs, etc."
+          "// Pre-request script global - Auto-fill de variáveis",
+          "",
+          "// Se não houver usuarioId, gera um ID de exemplo",
+          "if (!pm.environment.get('usuarioId')) {",
+          "    pm.environment.set('usuarioId', '01JCQR5H8K9M0N1P2Q3R4S5T6U');",
+          "    console.log('✨ usuarioId auto-preenchido com valor de exemplo');",
+          "}",
+          "",
+          "// Se não houver mindcardId, gera um ID de exemplo",
+          "if (!pm.environment.get('mindcardId')) {",
+          "    pm.environment.set('mindcardId', '01JCQR7X9Y0Z1A2B3C4D5E6F7G');",
+          "    console.log('✨ mindcardId auto-preenchido com valor de exemplo');",
+          "}",
+          "",
+          "// Se não houver cardId, gera um ID de exemplo",
+          "if (!pm.environment.get('cardId')) {",
+          "    pm.environment.set('cardId', '01JCQR9A8B7C6D5E4F3G2H1I0J');",
+          "    console.log('✨ cardId auto-preenchido com valor de exemplo');",
+          "}",
+          "",
+          "// Log do status de autenticação",
+          "const token = pm.environment.get('accessToken');",
+          "if (token) {",
+          "    console.log('🔐 Token JWT presente - Requisição autenticada');",
+          "} else {",
+          "    console.log('⚠️  Sem token JWT - Apenas rotas públicas funcionarão');",
+          "}"
         ]
       }
     },
