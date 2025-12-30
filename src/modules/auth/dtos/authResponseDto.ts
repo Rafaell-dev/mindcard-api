@@ -5,13 +5,16 @@ class UserResponse {
   id: string;
 
   @ApiProperty({ description: 'Nome do usuário' })
-  nome: string;
+  nome?: string;
 
   @ApiProperty({ description: 'Email do usuário' })
   email: string;
 
   @ApiProperty({ description: 'URL do avatar', required: false })
   avatarUrl?: string;
+
+  @ApiProperty({ description: 'Onboarding completo', default: false })
+  onboardingCompleto: boolean;
 }
 
 export class AuthResponseDto {

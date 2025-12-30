@@ -7,24 +7,28 @@ datasource db {
 }
 
 model usuario {
-  id                String     @id @default(cuid())
-  nome              String
-  usuario           String     @unique
-  email             String     @unique
-  senha             String?
-  google_id         String?    @unique
-  provider          String     @default("local")
-  avatar_url        String?
-  faculdade_id      String?
-  faculdade         faculdade? @relation(fields: [faculdade_id], references: [id])
-  idioma            String     @default("pt-BR")
-  data_registro     DateTime   @default(now())
-  xp_total          Int        @default(0)
-  sequencia_atual   Int        @default(0)
-  sequencia_recorde Int        @default(0)
+  id                  String     @id @default(cuid())
+  nome                String?
+  usuario             String     @unique
+  email               String     @unique
+  senha               String?
+  google_id           String?    @unique
+  provider            String     @default("local")
+  avatar_url          String?
+  faculdade_id        String?
+  faculdade           faculdade? @relation(fields: [faculdade_id], references: [id])
+  idioma              String     @default("pt-BR")
+  celular             String?
+  data_nascimento     DateTime?
+  onboarding_completo Boolean    @default(false)
+  data_registro       DateTime   @default(now())
+  xp_total            Int        @default(0)
+  sequencia_atual     Int        @default(0)
+  sequencia_recorde   Int        @default(0)
 
-  mindcards mindcard[]
-  praticas  pratica[]
+  mindcards            mindcard[]
+  praticas             pratica[]
+  respostas_onboarding resposta_onboarding[]
 
   @@index([email])
   @@index([usuario])
@@ -150,4 +154,52 @@ model faculdade {
   @@index([municipio])
   @@index([categoria])
   @@index([situacao])
+}
+
+model pergunta_onboarding {
+  id            String       @id @default(cuid())
+  ordem         Int
+  texto         String
+  tipo_resposta TipoResposta
+  obrigatoria   Boolean      @default(true)
+  ativa         Boolean      @default(true)
+  data_criacao  DateTime     @default(now())
+
+  opcoes    opcao_pergunta[]
+  respostas resposta_onboarding[]
+
+  @@index([ativa, ordem])
+}
+
+model opcao_pergunta {
+  id          String @id @default(cuid())
+  pergunta_id String
+  texto       String
+  valor       String
+  ordem       Int
+
+  pergunta pergunta_onboarding @relation(fields: [pergunta_id], references: [id], onDelete: Cascade)
+
+  @@index([pergunta_id])
+}
+
+model resposta_onboarding {
+  id             String   @id @default(cuid())
+  usuario_id     String
+  pergunta_id    String
+  resposta_texto String?
+  opcao_id       String?
+  data_resposta  DateTime @default(now())
+
+  usuario  usuario             @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  pergunta pergunta_onboarding @relation(fields: [pergunta_id], references: [id], onDelete: Cascade)
+
+  @@unique([usuario_id, pergunta_id])
+  @@index([usuario_id])
+}
+
+enum TipoResposta {
+  MULTIPLA_ESCOLHA
+  TEXTO_LIVRE
+  DATA
 }

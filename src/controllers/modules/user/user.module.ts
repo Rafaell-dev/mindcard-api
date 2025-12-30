@@ -4,6 +4,7 @@ import { CreateUserUseCase } from 'src/modules/user/useCases/createUserUseCase/c
 import { UpdateUserByIdUseCase } from 'src/modules/user/useCases/updateUserUseCase/updateUserByIdUseCase';
 import { FindByIdUserUseCase } from 'src/modules/user/useCases/findByIdUserUseCase/findByIdUserUseCase';
 import { FindByEmailUserUseCase } from 'src/modules/user/useCases/findByEmailUserUseCase/findByEmailUserUseCase';
+import { DeleteUserUseCase } from 'src/modules/user/useCases/deleteUserUseCase/deleteUserUseCase';
 import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { DatabaseModule } from 'src/database/database.module';
     UpdateUserByIdUseCase,
     FindByIdUserUseCase,
     FindByEmailUserUseCase,
+    DeleteUserUseCase,
   ],
 })
 export class UserModule {}

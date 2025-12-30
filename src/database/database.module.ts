@@ -36,6 +36,7 @@ import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdade
     },
   ],
   exports: [
+    PrismaService,
     UserRepository,
     MindcardRepository,
     CardRepository,

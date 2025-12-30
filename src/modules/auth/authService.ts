@@ -67,6 +67,7 @@ export class AuthService {
         nome: user.nome,
         email: user.email,
         avatarUrl: user.avatarUrl,
+        onboardingCompleto: user.onboardingCompleto,
       },
     };
   }

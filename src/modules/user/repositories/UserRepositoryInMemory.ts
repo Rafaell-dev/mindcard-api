@@ -83,4 +83,18 @@ export class UserRepositoryInMemory implements UserRepository {
 
     return Promise.resolve(updatedUser);
   }
+
+  countUsers(): Promise<number> {
+    return Promise.resolve(this.users.length);
+  }
+
+  delete(id: string): Promise<void> {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+
+    if (userIndex !== -1) {
+      this.users.splice(userIndex, 1);
+    }
+
+    return Promise.resolve();
+  }
 }

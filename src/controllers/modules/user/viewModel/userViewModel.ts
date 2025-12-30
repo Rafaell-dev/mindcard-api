@@ -6,6 +6,7 @@ export class UserViewModel {
       id: data.id,
       email: data.email,
       nome: data.nome,
+      usuario: data.usuario,
       faculdadeId: data.faculdadeId,
       faculdadeNome: data.faculdadeNome,
       idioma: data.idioma,
@@ -13,6 +14,7 @@ export class UserViewModel {
       xpTotal: data.xpTotal,
       sequenciaAtual: data.sequenciaAtual,
       sequenciaRecorde: data.sequenciaRecorde,
+      onboardingCompleto: data.onboardingCompleto,
     };
   }
 }
