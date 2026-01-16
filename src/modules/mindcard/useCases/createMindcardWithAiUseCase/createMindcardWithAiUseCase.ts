@@ -15,9 +15,10 @@ interface CreateMindcardWithAiRequest {
   fonteArquivo: Express.Multer.File;
   promptPersonalizado?: string | null;
   usuarioId: string;
-  tipoGeracao: 'FLASHCARDS' | 'QUIZ';
-  skipFileUpload?: boolean; // Flag para pular upload do R2 (quando já foi feito)
-  existingMindcardId?: string; // ID do mindcard existente (modo assíncrono)
+  intervaloPaginas?: string | null;
+  tipoQuestoes?: ('Alternativa' | 'Múltipla escolha')[] | null;
+  skipFileUpload?: boolean;
+  existingMindcardId?: string;
 }
 
 /**
@@ -41,7 +42,8 @@ export class CreateMindcardWithAiUseCase {
     fonteArquivo,
     promptPersonalizado,
     usuarioId,
-    tipoGeracao,
+    intervaloPaginas,
+    tipoQuestoes,
     skipFileUpload = false,
     existingMindcardId,
   }: CreateMindcardWithAiRequest) {
@@ -82,6 +84,8 @@ export class CreateMindcardWithAiUseCase {
           promptPersonalizado: promptPersonalizado ?? null,
           usuarioId,
           dataCriacao: new Date(),
+          intervaloPaginas: intervaloPaginas ?? null,
+          tipoQuestoes: tipoQuestoes ? tipoQuestoes.join(', ') : null,
         });
 
         await this.mindcardRepository.create(createdMindcard);
@@ -94,15 +98,59 @@ export class CreateMindcardWithAiUseCase {
         }
       }
 
-      // Step 3: Generate cards with AI
+      // Step 3: Generate cards with IA
       this.logger.log(
-        `Generating ${tipoGeracao} for mindcard ${mindcardId} using AI`,
+        `Generating ${tipoQuestoes?.join(', ') || 'Alternativa'} for mindcard ${mindcardId} using IA`,
       );
 
-      if (tipoGeracao === 'FLASHCARDS') {
-        await this.generateFlashcards(fonteArquivo, mindcardId, createdCards);
-      } else if (tipoGeracao === 'QUIZ') {
-        await this.generateQuiz(fonteArquivo, mindcardId, createdCards);
+      // Flag para solicitar o título apenas na primeira chamada se necessário
+      let requestTitle =
+        !titulo ||
+        titulo === 'Gerando título com IA...' ||
+        titulo === '' ||
+        (createdMindcard &&
+          createdMindcard.titulo === 'Gerando título com IA...');
+
+      let suggestedTitle: string | null = null;
+      const types = tipoQuestoes || ['Alternativa'];
+
+      for (const type of types) {
+        if (type === 'Alternativa') {
+          const result = await this.generateFlashcards(
+            fonteArquivo,
+            mindcardId,
+            createdCards,
+            intervaloPaginas ?? undefined,
+            requestTitle,
+          );
+          if (requestTitle && result.tituloSugestao) {
+            suggestedTitle = result.tituloSugestao;
+            requestTitle = false; // Título já sugerido
+          }
+        } else if (type === 'Múltipla escolha') {
+          const result = await this.generateQuiz(
+            fonteArquivo,
+            mindcardId,
+            createdCards,
+            intervaloPaginas ?? undefined,
+            requestTitle,
+          );
+          if (requestTitle && result.tituloSugestao) {
+            suggestedTitle = result.tituloSugestao;
+            requestTitle = false; // Título já sugerido
+          }
+        }
+      }
+
+      // Step 4: Update mindcard title if suggested
+      if (suggestedTitle && createdMindcard) {
+        this.logger.log(
+          `Updating mindcard ${mindcardId} title to: ${suggestedTitle}`,
+        );
+        createdMindcard.titulo = suggestedTitle;
+        await this.mindcardRepository.updateById(createdMindcard.id, {
+          titulo: suggestedTitle,
+        });
       }
 
       this.logger.log(
@@ -140,10 +188,14 @@ export class CreateMindcardWithAiUseCase {
     file: Express.Multer.File,
     mindcardId: string,
     createdCards: Card[],
-  ): Promise<void> {
+    intervaloPaginas?: string,
+    requestTitle = false,
+  ): Promise<{ tituloSugestao?: string | null }> {
     const aiResult = await this.geminiService.generateFlashcards(
       file.buffer,
       file.mimetype,
+      intervaloPaginas,
+      requestTitle,
     );
 
     this.logger.log(`AI generated ${aiResult.total} flashcards`);
@@ -162,6 +214,8 @@ export class CreateMindcardWithAiUseCase {
       await this.cardRepository.create(card);
       createdCards.push(card);
     }
+
+    return { tituloSugestao: aiResult.tituloSugestao };
   }
 
   /**
@@ -171,12 +225,16 @@ export class CreateMindcardWithAiUseCase {
     file: Express.Multer.File,
     mindcardId: string,
     createdCards: Card[],
-  ): Promise<void> {
+    intervaloPaginas?: string,
+    requestTitle = false,
+  ): Promise<{ tituloSugestao?: string | null }> {
     // Generate 10 questions by default
     const aiResult = await this.geminiService.generateQuestions(
       file.buffer,
       file.mimetype,
       10,
+      intervaloPaginas,
+      requestTitle,
     );
 
     this.logger.log(`AI generated ${aiResult.total} quiz questions`);
@@ -211,6 +269,8 @@ export class CreateMindcardWithAiUseCase {
         await this.opcaoRespostaRepository.create(opcaoResposta);
       }
     }
+
+    return { tituloSugestao: aiResult.tituloSugestao };
   }
 
   /**

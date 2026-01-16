@@ -7,6 +7,8 @@ export interface MindcardProps {
   promptPersonalizado: string | null;
   usuarioId: string;
   dataCriacao?: Date;
+  intervaloPaginas?: string | null;
+  tipoQuestoes?: string | null;
 }
 
 export class Mindcard {
@@ -16,6 +18,8 @@ export class Mindcard {
   promptPersonalizado: string | null;
   readonly usuarioId: string;
   readonly dataCriacao: Date;
+  intervaloPaginas: string | null;
+  tipoQuestoes: string | null;
 
   constructor(props: MindcardProps) {
     this.id = props.id ?? randomUUID();
@@ -24,5 +28,7 @@ export class Mindcard {
     this.promptPersonalizado = props.promptPersonalizado;
     this.usuarioId = props.usuarioId;
     this.dataCriacao = props.dataCriacao ?? new Date();
+    this.intervaloPaginas = props.intervaloPaginas ?? null;
+    this.tipoQuestoes = props.tipoQuestoes ?? null;
   }
 }

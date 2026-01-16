@@ -27,8 +27,9 @@ export const MAX_FILE_API_SIZE = 2 * 1024 * 1024 * 1024;
 
 /**
  * Default model configuration
+ * Available models: gemini-2.5-flash, gemini-2.5-pro, gemini-2.0-flash, gemini-1.5-flash, gemini-1.5-pro
  */
-export const DEFAULT_MODEL = 'gemini-1.5-flash';
+export const DEFAULT_MODEL = 'gemini-2.5-flash';
 export const DEFAULT_TEMPERATURE = 0.7;
 export const DEFAULT_MAX_TOKENS = 2048;
 export const DEFAULT_TOP_P = 0.95;
@@ -60,10 +61,14 @@ INSTRUÇÕES:
 - Mantenha as perguntas claras e concisas
 - As respostas devem ser completas mas diretas ao ponto (máximo 2-3 linhas)
 
+- Se solicitado, sugira um título curto e chamativo para este conteúdo no campo "tituloSugestao".
+- Caso contrário, deixe o campo "tituloSugestao" como null.
+
 IMPORTANTE: Retorne APENAS um JSON válido, sem texto adicional antes ou depois.
 
 Formato JSON:
 {
+  "tituloSugestao": "string|null",
   "flashcards": [
     {
       "frente": "string",
@@ -87,10 +92,14 @@ INSTRUÇÕES:
 - Adicione tags relevantes para categorização
 - Mantenha as alternativas curtas e objetivas
 
+- Se solicitado, sugira um título curto e chamativo para este conteúdo no campo "tituloSugestao".
+- Caso contrário, deixe o campo "tituloSugestao" como null.
+
 IMPORTANTE: Retorne APENAS um JSON válido, sem texto adicional antes ou depois.
 
 Formato JSON:
 {
+  "tituloSugestao": "string|null",
   "questions": [
     {
       "pergunta": "string",

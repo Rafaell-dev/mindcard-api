@@ -10,18 +10,16 @@ import {
   QUEUE_PRIORITIES,
   FILE_SIZE_THRESHOLDS,
 } from '../../../../queue/queue.constants';
-import {
-  MindcardGenerationJobData,
-  TipoGeracao,
-} from '../../../../queue/interfaces/job-data.interface';
+import { MindcardGenerationJobData } from '../../../../queue/interfaces/job-data.interface';
 import { BadRequestException } from '@nestjs/common';
 
 interface CreateMindcardAsyncRequest {
-  titulo: string;
+  titulo?: string;
   fonteArquivo: Express.Multer.File;
   promptPersonalizado?: string | null;
   usuarioId: string;
-  tipoGeracao: 'FLASHCARDS' | 'QUIZ';
+  intervaloPaginas?: string;
+  tipoQuestoes: ('Alternativa' | 'Múltipla escolha')[];
 }
 
 interface CreateMindcardAsyncResponse {
@@ -51,7 +49,8 @@ export class CreateMindcardAsyncUseCase {
     fonteArquivo,
     promptPersonalizado,
     usuarioId,
-    tipoGeracao,
+    intervaloPaginas,
+    tipoQuestoes,
   }: CreateMindcardAsyncRequest): Promise<CreateMindcardAsyncResponse> {
     if (!fonteArquivo) {
       throw new BadRequestException(
@@ -73,11 +72,13 @@ export class CreateMindcardAsyncUseCase {
       this.logger.log(`Creating mindcard ${mindcardId} with PENDING status`);
       const mindcard = new Mindcard({
         id: mindcardId,
-        titulo,
+        titulo: titulo || 'Gerando título com IA...',
         fonteArquivo: fonteArquivoUrl, // URL do R2 já salvo
         promptPersonalizado: promptPersonalizado ?? null,
         usuarioId,
         dataCriacao: new Date(),
+        intervaloPaginas: intervaloPaginas ?? null,
+        tipoQuestoes: tipoQuestoes.join(', '),
       });
 
       await this.mindcardRepository.create(mindcard);
@@ -97,7 +98,8 @@ export class CreateMindcardAsyncUseCase {
         fileName: fonteArquivo.originalname,
         mimeType: fonteArquivo.mimetype,
         fileSize: fonteArquivo.size,
-        tipoGeracao: tipoGeracao as TipoGeracao,
+        intervaloPaginas,
+        tipoQuestoes,
         promptPersonalizado: promptPersonalizado ?? undefined,
       };
 

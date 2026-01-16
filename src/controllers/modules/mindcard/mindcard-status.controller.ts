@@ -73,7 +73,7 @@ export class MindcardStatusController {
           {
             event: 'JOB_STARTED',
             timestamp: '2025-11-15T00:20:00.000Z',
-            metadata: { userId: '8c40...', tipoGeracao: 'FLASHCARDS' },
+            metadata: { userId: '8c40...', tipoQuestoes: 'Alternativa' },
           },
           {
             event: 'FILE_VALIDATED',

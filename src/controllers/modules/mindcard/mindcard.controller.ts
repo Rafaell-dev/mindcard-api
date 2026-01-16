@@ -16,6 +16,7 @@ import {
   ApiParam,
   ApiConsumes,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMindcardAsyncUseCase } from 'src/modules/mindcard/useCases/createMindcardAsyncUseCase/createMindcardAsyncUseCase';
@@ -26,9 +27,17 @@ import { DeleteMindcardByIdUseCase } from 'src/modules/mindcard/useCases/deleteM
 import { CreateMindcardBody } from './dtos/createMindcardBody';
 import { UpdateMindcardBody } from './dtos/updateMindcardBody';
 import { MindcardViewModel } from './viewModel/mindcardViewModel';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/modules/auth/guards';
+import {
+  CurrentUser,
+  type AuthenticatedUser,
+} from 'src/modules/auth/decorators/currentUserDecorator';
 
 @ApiTags('Mindcard')
 @Controller('mindcard')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class MindcardController {
   constructor(
     private createMindcardAsyncUseCase: CreateMindcardAsyncUseCase,
@@ -51,24 +60,24 @@ export class MindcardController {
     description: 'Dados do mindcard e arquivo fonte',
     schema: {
       type: 'object',
-      required: ['titulo', 'usuarioId', 'tipoGeracao', 'fonteArquivo'],
+      required: ['titulo', 'tipoQuestoes', 'fonteArquivo'],
       properties: {
         titulo: {
           type: 'string',
           example: 'Matemática - Álgebra Linear',
           description: 'Título do mindcard',
         },
-        usuarioId: {
+        tipoQuestoes: {
           type: 'string',
-          format: 'uuid',
-          example: '8c40a29b-04f4-4960-965d-9e741f66288f',
-          description: 'ID do usuário (UUID v7)',
+          enum: ['Alternativa', 'Múltipla escolha'],
+          example: 'Alternativa',
+          description: 'Tipo de questões a serem geradas',
         },
-        tipoGeracao: {
+        intervaloPaginas: {
           type: 'string',
-          enum: ['FLASHCARDS', 'QUIZ'],
-          example: 'FLASHCARDS',
-          description: 'Tipo de conteúdo a ser gerado',
+          example: '1-10',
+          description: 'Intervalo de páginas para focar a geração (opcional)',
+          nullable: true,
         },
         promptPersonalizado: {
           type: 'string',
@@ -109,15 +118,18 @@ export class MindcardController {
   async createPost(
     @Body() body: CreateMindcardBody,
     @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    const { titulo, promptPersonalizado, usuarioId, tipoGeracao } = body;
+    const { titulo, promptPersonalizado, intervaloPaginas, tipoQuestoes } =
+      body;
 
     const result = await this.createMindcardAsyncUseCase.execute({
       titulo,
       fonteArquivo: file,
       promptPersonalizado,
-      usuarioId,
-      tipoGeracao,
+      usuarioId: user.userId,
+      intervaloPaginas,
+      tipoQuestoes,
     });
 
     return {

@@ -45,6 +45,11 @@ export class Flashcard {
  */
 export interface FlashcardGenerationResponse {
   /**
+   * Sugestão de título para o mindcard
+   */
+  tituloSugestao?: string | null;
+
+  /**
    * Generated flashcards
    */
   flashcards: Flashcard[];

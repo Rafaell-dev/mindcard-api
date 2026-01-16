@@ -28,7 +28,8 @@ export interface MindcardGenerationJobData {
   fileName: string;
   mimeType: string; // MIME type do arquivo
   fileSize: number;
-  tipoGeracao: TipoGeracao;
+  intervaloPaginas?: string;
+  tipoQuestoes: ('Alternativa' | 'Múltipla escolha')[];
   promptPersonalizado?: string;
 }
 

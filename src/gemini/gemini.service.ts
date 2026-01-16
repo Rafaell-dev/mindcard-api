@@ -270,6 +270,8 @@ export class GeminiService implements OnModuleInit {
   async generateFlashcards(
     fileBuffer: Buffer,
     mimeType: string,
+    intervaloPaginas?: string,
+    requestTitle = false,
   ): Promise<FlashcardGenerationResponse> {
     this.logger.log('Generating flashcards from file');
 
@@ -277,8 +279,11 @@ export class GeminiService implements OnModuleInit {
     const modelName = this.options.model || DEFAULT_MODEL;
 
     try {
-      // Use custom model with higher token limit for flashcards
-      const customModel = this.createCustomModel({ maxTokens: 8192 });
+      // Use custom model with higher token limit for flashcards and JSON mode
+      const customModel = this.createCustomModel({
+        maxTokens: 8192,
+        responseMimeType: 'application/json',
+      });
 
       // Validate file
       FileValidator.validate(fileBuffer, mimeType);
@@ -316,7 +321,17 @@ export class GeminiService implements OnModuleInit {
                   fileUri: uploadResult.fileUri,
                 },
               },
-              { text: FLASHCARD_GENERATION_PROMPT },
+              {
+                text: `${
+                  requestTitle
+                    ? 'SUGIRA UM TÍTULO CURTO PARA O CONTEÚDO NO CAMPO "tituloSugestao".\n'
+                    : ''
+                }${
+                  intervaloPaginas
+                    ? `${FLASHCARD_GENERATION_PROMPT}\n\nFOQUE APENAS NO SEGUINTE INTERVALO DE PÁGINAS: ${intervaloPaginas}`
+                    : FLASHCARD_GENERATION_PROMPT
+                }`,
+              },
             ];
           } else {
             // Use inline data for small files
@@ -327,7 +342,11 @@ export class GeminiService implements OnModuleInit {
                   mimeType,
                 },
               },
-              { text: FLASHCARD_GENERATION_PROMPT },
+              {
+                text: intervaloPaginas
+                  ? `${FLASHCARD_GENERATION_PROMPT}\n\nFOQUE APENAS NO SEGUINTE INTERVALO DE PÁGINAS: ${intervaloPaginas}`
+                  : FLASHCARD_GENERATION_PROMPT,
+              },
             ];
           }
 
@@ -351,9 +370,6 @@ export class GeminiService implements OnModuleInit {
         this.logger.error(
           'No candidates in response. Safety filters may have blocked the content.',
         );
-        this.logger.error(
-          `Prompt feedback: ${JSON.stringify(result.response.promptFeedback)}`,
-        );
         throw new GeminiApiException(
           'AI generation blocked. This may be due to safety filters or content policy violations.',
         );
@@ -366,7 +382,7 @@ export class GeminiService implements OnModuleInit {
         const finishReason = result.response.candidates[0]?.finishReason;
         this.logger.error(`Empty response. Finish reason: ${finishReason}`);
 
-        if (finishReason === 'MAX_TOKENS') {
+        if ((finishReason as any) === 'MAX_TOKENS') {
           throw new GeminiApiException(
             'AI response exceeded token limit. Try increasing maxTokens or using a smaller file.',
           );
@@ -378,13 +394,15 @@ export class GeminiService implements OnModuleInit {
       }
 
       // Parse JSON response
-      const parsedData = this.parseJsonResponse<{ flashcards: Flashcard[] }>(
-        content,
-      );
+      const parsedData = this.parseJsonResponse<{
+        flashcards: Flashcard[];
+        tituloSugestao?: string | null;
+      }>(content);
 
       const duration = Date.now() - startTime;
 
       const response: FlashcardGenerationResponse = {
+        tituloSugestao: parsedData.tituloSugestao,
         flashcards: parsedData.flashcards,
         total: parsedData.flashcards.length,
         metadata: {
@@ -425,6 +443,8 @@ export class GeminiService implements OnModuleInit {
     fileBuffer: Buffer,
     mimeType: string,
     count?: number,
+    intervaloPaginas?: string,
+    requestTitle = false,
   ): Promise<QuestionGenerationResponse> {
     this.logger.log(`Generating ${count || 'multiple'} questions from file`);
 
@@ -432,12 +452,23 @@ export class GeminiService implements OnModuleInit {
     const modelName = this.options.model || DEFAULT_MODEL;
 
     try {
-      const prompt = count
+      let prompt = count
         ? `${QUESTION_GENERATION_PROMPT}\n\nGere exatamente ${count} questões.`
         : QUESTION_GENERATION_PROMPT;
 
-      // Use custom model with higher token limit for questions
-      const customModel = this.createCustomModel({ maxTokens: 8192 });
+      if (requestTitle) {
+        prompt = `SUGIRA UM TÍTULO PARA O CONTEÚDO NO CAMPO "tituloSugestao".\n${prompt}`;
+      }
+
+      if (intervaloPaginas) {
+        prompt += `\n\nFOQUE APENAS NO SEGUINTE INTERVALO DE PÁGINAS: ${intervaloPaginas}`;
+      }
+
+      // Use custom model with JSON mode
+      const customModel = this.createCustomModel({
+        maxTokens: 8192,
+        responseMimeType: 'application/json',
+      });
 
       // Validate file
       FileValidator.validate(fileBuffer, mimeType);
@@ -510,9 +541,6 @@ export class GeminiService implements OnModuleInit {
         this.logger.error(
           'No candidates in response. Safety filters may have blocked the content.',
         );
-        this.logger.error(
-          `Prompt feedback: ${JSON.stringify(result.response.promptFeedback)}`,
-        );
         throw new GeminiApiException(
           'AI generation blocked. This may be due to safety filters or content policy violations.',
         );
@@ -525,7 +553,7 @@ export class GeminiService implements OnModuleInit {
         const finishReason = result.response.candidates[0]?.finishReason;
         this.logger.error(`Empty response. Finish reason: ${finishReason}`);
 
-        if (finishReason === 'MAX_TOKENS') {
+        if ((finishReason as any) === 'MAX_TOKENS') {
           throw new GeminiApiException(
             'AI response exceeded token limit. Try increasing maxTokens or using a smaller file.',
           );
@@ -537,13 +565,15 @@ export class GeminiService implements OnModuleInit {
       }
 
       // Parse JSON response
-      const parsedData = this.parseJsonResponse<{ questions: Question[] }>(
-        content,
-      );
+      const parsedData = this.parseJsonResponse<{
+        questions: Question[];
+        tituloSugestao?: string | null;
+      }>(content);
 
       const duration = Date.now() - startTime;
 
       const response: QuestionGenerationResponse = {
+        tituloSugestao: parsedData.tituloSugestao,
         questions: parsedData.questions,
         total: parsedData.questions.length,
         metadata: {
@@ -601,7 +631,11 @@ export class GeminiService implements OnModuleInit {
    * Create a custom model with different parameters
    */
   private createCustomModel(
-    options: Partial<Pick<GeminiOptions, 'temperature' | 'maxTokens'>>,
+    options: Partial<
+      Pick<GeminiOptions, 'temperature' | 'maxTokens'> & {
+        responseMimeType?: string;
+      }
+    >,
   ): GenerativeModel {
     return this.genAI.getGenerativeModel({
       model: this.options.model || DEFAULT_MODEL,
@@ -614,6 +648,7 @@ export class GeminiService implements OnModuleInit {
           options.maxTokens ?? this.options.maxTokens ?? DEFAULT_MAX_TOKENS,
         topP: this.options.topP ?? DEFAULT_TOP_P,
         topK: this.options.topK ?? DEFAULT_TOP_K,
+        responseMimeType: options.responseMimeType,
       },
       safetySettings: this.options.safetySettings || DEFAULT_SAFETY_SETTINGS,
     });
@@ -640,10 +675,25 @@ export class GeminiService implements OnModuleInit {
         return JSON.parse(jsonString) as T;
       } catch (firstError) {
         // If parsing fails, try to find complete JSON within the string
-        // This handles cases where the response is truncated or has extra text
-        const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          return JSON.parse(jsonMatch[0]) as T;
+        // This handles cases where the response has extra text around the JSON
+        const openBraceIndex = jsonString.indexOf('{');
+        const closeBraceIndex = jsonString.lastIndexOf('}');
+
+        if (openBraceIndex !== -1 && closeBraceIndex !== -1) {
+          const possibleJson = jsonString.substring(
+            openBraceIndex,
+            closeBraceIndex + 1,
+          );
+          try {
+            return JSON.parse(possibleJson) as T;
+          } catch (secondError) {
+            // Still failing, let's try to fix common JSON errors like trailing commas or missing closing brackets
+            // (Only for simple recovery, not full repair)
+            this.logger.warn(
+              'Failed on second parse attempt, trying recovery...',
+            );
+            throw secondError;
+          }
         }
         throw firstError;
       }

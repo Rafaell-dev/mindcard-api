@@ -14,8 +14,8 @@ export interface GeminiOptions {
   apiKey: string;
 
   /**
-   * Model name (default: gemini-1.5-flash)
-   * Available models: gemini-1.5-pro, gemini-1.5-flash, gemini-pro-vision
+   * Model name (default: gemini-2.5-flash)
+   * Available models: gemini-2.5-flash, gemini-2.5-pro, gemini-2.0-flash, gemini-1.5-flash, gemini-1.5-pro
    */
   model?: string;
 
