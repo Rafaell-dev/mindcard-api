@@ -46,7 +46,8 @@ export class MindcardGenerationProcessor extends WorkerHost {
       fileName,
       mimeType,
       fileSize,
-      tipoGeracao,
+      intervaloPaginas,
+      tipoQuestoes,
       promptPersonalizado,
     } = job.data;
 
@@ -56,7 +57,7 @@ export class MindcardGenerationProcessor extends WorkerHost {
       // Log: JOB_STARTED
       await this.logEvent(job, JobEvent.JOB_STARTED, {
         userId,
-        tipoGeracao,
+        tipoQuestoes,
         fileSize,
       });
 
@@ -108,7 +109,8 @@ export class MindcardGenerationProcessor extends WorkerHost {
         fonteArquivo: multerFile,
         promptPersonalizado,
         usuarioId: userId,
-        tipoGeracao: tipoGeracao as 'FLASHCARDS' | 'QUIZ',
+        intervaloPaginas,
+        tipoQuestoes,
         skipFileUpload: true, // Pular upload do R2 (usando buffer do Redis)
         existingMindcardId: mindcardId, // ID do mindcard existente
       });

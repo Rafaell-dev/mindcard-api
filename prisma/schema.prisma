@@ -48,6 +48,8 @@ model mindcard {
   mensagem_erro        String?
   iniciado_em          DateTime?
   concluido_em         DateTime?
+  intervalo_paginas    String?
+  tipo_questoes        String?
 
   usuario  usuario   @relation(fields: [usuario_id], references: [id])
   cards    card[]

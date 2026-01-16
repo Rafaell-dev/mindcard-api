@@ -17,6 +17,8 @@ export class PrismaMindcardMapper {
           id: mindcard.usuarioId,
         },
       },
+      intervalo_paginas: mindcard.intervaloPaginas,
+      tipo_questoes: mindcard.tipoQuestoes,
     };
   }
 
@@ -40,6 +42,12 @@ export class PrismaMindcardMapper {
     if (mindcard.dataCriacao !== undefined) {
       partial.data_criacao = mindcard.dataCriacao;
     }
+    if (mindcard.intervaloPaginas !== undefined) {
+      partial.intervalo_paginas = mindcard.intervaloPaginas;
+    }
+    if (mindcard.tipoQuestoes !== undefined) {
+      partial.tipo_questoes = mindcard.tipoQuestoes;
+    }
 
     return partial;
   }
@@ -52,6 +60,8 @@ export class PrismaMindcardMapper {
       promptPersonalizado: mindcard.prompt_personalizado,
       usuarioId: mindcard.usuario_id,
       dataCriacao: mindcard.data_criacao,
+      intervaloPaginas: mindcard.intervalo_paginas,
+      tipoQuestoes: mindcard.tipo_questoes,
     });
   }
 }

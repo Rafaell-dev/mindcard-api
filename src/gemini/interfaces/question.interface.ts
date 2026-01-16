@@ -1,4 +1,10 @@
-import { IsString, IsArray, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  ValidateNested,
+  IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 /**
@@ -40,6 +46,7 @@ export class Question {
    * Correct answer identifier
    */
   @IsString()
+  @IsNotEmpty()
   respostaCorreta: string;
 
   /**
@@ -62,6 +69,11 @@ export class Question {
  * Response structure for question generation
  */
 export interface QuestionGenerationResponse {
+  /**
+   * Sugestão de título para o mindcard
+   */
+  tituloSugestao?: string | null;
+
   /**
    * Generated questions
    */

@@ -1,50 +1,20 @@
 import { Logger } from '@nestjs/common';
 import { GeminiApiException } from 'src/exceptions/GeminiApiException';
+import { GoogleAIFileManager, FileState } from '@google/generative-ai/server';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import FormData from 'form-data';
-import axios from 'axios';
-
-interface FileUploadResponse {
-  file: {
-    name: string;
-    displayName: string;
-    mimeType: string;
-    sizeBytes: string;
-    createTime: string;
-    updateTime: string;
-    expirationTime: string;
-    sha256Hash: string;
-    uri: string;
-    state: 'PROCESSING' | 'ACTIVE' | 'FAILED';
-  };
-}
-
-interface FileMetadata {
-  name: string;
-  displayName: string;
-  mimeType: string;
-  sizeBytes: string;
-  createTime: string;
-  updateTime: string;
-  expirationTime: string;
-  sha256Hash: string;
-  uri: string;
-  state: 'PROCESSING' | 'ACTIVE' | 'FAILED';
-}
 
 /**
  * Helper for uploading large files to Gemini File API
- * Uses REST API directly as the SDK doesn't fully support File API yet
+ * Uses the official GoogleAIFileManager SDK
  */
 export class FileUploader {
   private static readonly logger = new Logger(FileUploader.name);
-  private apiKey: string;
-  private readonly baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+  private fileManager: GoogleAIFileManager;
 
   constructor(apiKey: string) {
-    this.apiKey = apiKey;
+    this.fileManager = new GoogleAIFileManager(apiKey);
   }
 
   /**
@@ -73,44 +43,25 @@ export class FileUploader {
       // Write buffer to temp file
       fs.writeFileSync(tempFilePath, buffer);
 
-      // Create form data
-      const formData = new FormData();
-      formData.append('file', fs.createReadStream(tempFilePath), {
-        filename: displayName || tempFileName,
-        contentType: mimeType,
+      // Upload using SDK
+      const uploadResponse = await this.fileManager.uploadFile(tempFilePath, {
+        mimeType,
+        displayName: displayName || tempFileName,
       });
 
-      // Upload to Gemini File API
-      const response = await axios.post<FileUploadResponse>(
-        `${this.baseUrl}/files?key=${this.apiKey}`,
-        formData,
-        {
-          headers: {
-            ...formData.getHeaders(),
-          },
-          maxBodyLength: Infinity,
-          maxContentLength: Infinity,
-        },
-      );
-
       FileUploader.logger.log(
-        `File uploaded successfully. URI: ${response.data.file.uri}`,
+        `File uploaded successfully. URI: ${uploadResponse.file.uri}`,
       );
 
       // Return file URI and name
       return {
-        fileUri: response.data.file.uri,
-        fileName: response.data.file.name,
+        fileUri: uploadResponse.file.uri,
+        fileName: uploadResponse.file.name,
       };
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        FileUploader.logger.error(
-          `Failed to upload file: ${error.response?.data?.error?.message || error.message}`,
-        );
-        throw new GeminiApiException(
-          `Failed to upload file: ${error.response?.data?.error?.message || error.message}`,
-        );
-      }
+      FileUploader.logger.error(
+        `Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       throw new GeminiApiException(
         `Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -146,18 +97,15 @@ export class FileUploader {
 
     while (Date.now() - startTime < maxWaitTime) {
       try {
-        const response = await axios.get<FileMetadata>(
-          `${this.baseUrl}/${fileName}?key=${this.apiKey}`,
-        );
+        const fileMetadata = await this.fileManager.getFile(fileName);
+        const state = fileMetadata.state;
 
-        const state = response.data.state;
-
-        if (state === 'ACTIVE') {
+        if (state === FileState.ACTIVE) {
           FileUploader.logger.log(`File is ready: ${fileName}`);
           return true;
         }
 
-        if (state === 'FAILED') {
+        if (state === FileState.FAILED) {
           throw new GeminiApiException(`File processing failed: ${fileName}`);
         }
 
@@ -167,7 +115,7 @@ export class FileUploader {
         );
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
+        if (error instanceof Error && error.message.includes('404')) {
           // File not found yet, continue waiting
           await new Promise((resolve) => setTimeout(resolve, pollInterval));
           continue;
@@ -191,7 +139,7 @@ export class FileUploader {
    */
   async deleteFile(fileName: string): Promise<void> {
     try {
-      await axios.delete(`${this.baseUrl}/${fileName}?key=${this.apiKey}`);
+      await this.fileManager.deleteFile(fileName);
       FileUploader.logger.log(`File deleted successfully: ${fileName}`);
     } catch (error) {
       FileUploader.logger.warn(
