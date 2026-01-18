@@ -1,7 +1,10 @@
 import { IsString, IsEnum, IsOptional } from 'class-validator';
-import { TipoCard, Dificuldade } from 'src/modules/card/entities/Card';
+import {
+  TipoCard,
+  Dificuldade,
+} from 'src/modules/itemMindcard/entities/ItemMindcard';
 
-export class UpdateCardBody {
+export class UpdateItemMindcardBody {
   @IsString()
   @IsOptional()
   titulo?: string;

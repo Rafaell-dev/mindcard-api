@@ -1,7 +1,10 @@
 import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
-import { TipoCard, Dificuldade } from 'src/modules/card/entities/Card';
+import {
+  TipoCard,
+  Dificuldade,
+} from 'src/modules/itemMindcard/entities/ItemMindcard';
 
-export class CreateCardBody {
+export class CreateItemMindcardBody {
   @IsString()
   @IsNotEmpty()
   titulo: string;

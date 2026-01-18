@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './controllers/modules/user/user.module';
 import { MindcardModule } from './controllers/modules/mindcard/mindcard.module';
-import { CardModule } from './controllers/modules/card/card.module';
+import { ItemMindcardModule } from './controllers/modules/itemMindcard/itemMindcard.module';
 import { FaculdadeModule } from './modules/faculdade/faculdade.module';
 import { AuthModule } from './modules/auth/authModule';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
@@ -26,7 +26,7 @@ import { JwtAuthGuard } from './modules/auth/guards';
     DatabaseModule,
     UserModule,
     MindcardModule,
-    CardModule,
+    ItemMindcardModule,
     FaculdadeModule,
     AuthModule,
     OnboardingModule,

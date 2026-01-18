@@ -1,10 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MindcardRepository } from '../../repositories/MindcardRepository';
-import { CardRepository } from 'src/modules/card/repositories/CardRepository';
-import { OpcaoRespostaRepository } from 'src/modules/card/repositories/OpcaoRespostaRepository';
+import { ItemMindcardRepository } from 'src/modules/itemMindcard/repositories/ItemMindcardRepository';
+import { OpcaoRespostaRepository } from 'src/modules/itemMindcard/repositories/OpcaoRespostaRepository';
 import { Mindcard } from '../../entities/Mindcard';
-import { Card, TipoCard, Dificuldade } from 'src/modules/card/entities/Card';
-import { OpcaoResposta } from 'src/modules/card/entities/OpcaoResposta';
+import {
+  ItemMindcard,
+  TipoCard,
+  Dificuldade,
+} from 'src/modules/itemMindcard/entities/ItemMindcard';
+import { OpcaoResposta } from 'src/modules/itemMindcard/entities/OpcaoResposta';
 import { v7 as uuidV7 } from 'uuid';
 import { R2Service } from 'src/r2/r2.service';
 import { GeminiService } from 'src/gemini/gemini.service';
@@ -22,8 +26,8 @@ interface CreateMindcardWithAiRequest {
 }
 
 /**
- * Use case for creating a mindcard with AI-generated cards
- * Integrates file upload, AI generation, and card creation in a single transaction
+ * Use case for creating a mindcard with AI-generated items
+ * Integrates file upload, AI generation, and item creation in a single transaction
  */
 @Injectable()
 export class CreateMindcardWithAiUseCase {
@@ -31,7 +35,7 @@ export class CreateMindcardWithAiUseCase {
 
   constructor(
     private mindcardRepository: MindcardRepository,
-    private cardRepository: CardRepository,
+    private itemMindcardRepository: ItemMindcardRepository,
     private opcaoRespostaRepository: OpcaoRespostaRepository,
     private r2Service: R2Service,
     private geminiService: GeminiService,
@@ -56,7 +60,7 @@ export class CreateMindcardWithAiUseCase {
     // Usar ID existente ou gerar novo
     const mindcardId = existingMindcardId ?? uuidV7();
     let fonteArquivoUrl: string | null = null;
-    const createdCards: Card[] = [];
+    const createdItems: ItemMindcard[] = [];
 
     try {
       // Step 1: Upload file to R2 (apenas se não for processamento assíncrono)
@@ -98,7 +102,7 @@ export class CreateMindcardWithAiUseCase {
         }
       }
 
-      // Step 3: Generate cards with IA
+      // Step 3: Generate items with IA
       this.logger.log(
         `Generating ${tipoQuestoes?.join(', ') || 'Alternativa'} for mindcard ${mindcardId} using IA`,
       );
@@ -119,7 +123,7 @@ export class CreateMindcardWithAiUseCase {
           const result = await this.generateFlashcards(
             fonteArquivo,
             mindcardId,
-            createdCards,
+            createdItems,
             intervaloPaginas ?? undefined,
             requestTitle,
           );
@@ -131,7 +135,7 @@ export class CreateMindcardWithAiUseCase {
           const result = await this.generateQuiz(
             fonteArquivo,
             mindcardId,
-            createdCards,
+            createdItems,
             intervaloPaginas ?? undefined,
             requestTitle,
           );
@@ -154,16 +158,16 @@ export class CreateMindcardWithAiUseCase {
       }
 
       this.logger.log(
-        `Successfully created mindcard ${mindcardId} with ${createdCards.length} cards`,
+        `Successfully created mindcard ${mindcardId} with ${createdItems.length} items`,
       );
 
       return {
         mindcard: createdMindcard,
-        cards: createdCards,
-        totalGenerated: createdCards.length,
+        itensMindcard: createdItems,
+        totalGenerated: createdItems.length,
       };
     } catch (error) {
-      // Rollback: Delete uploaded file and created cards
+      // Rollback: Delete uploaded file and created items
       this.logger.error(
         `Error creating mindcard with AI: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -172,9 +176,9 @@ export class CreateMindcardWithAiUseCase {
         await this.r2Service.deleteFile(fonteArquivoUrl).catch(() => {});
       }
 
-      // Delete created cards (mindcard will cascade delete if DB supports it)
-      for (const card of createdCards) {
-        await this.cardRepository.deleteById(card.id).catch(() => {});
+      // Delete created items (mindcard will cascade delete if DB supports it)
+      for (const item of createdItems) {
+        await this.itemMindcardRepository.deleteById(item.id).catch(() => {});
       }
 
       throw error;
@@ -187,7 +191,7 @@ export class CreateMindcardWithAiUseCase {
   private async generateFlashcards(
     file: Express.Multer.File,
     mindcardId: string,
-    createdCards: Card[],
+    createdItems: ItemMindcard[],
     intervaloPaginas?: string,
     requestTitle = false,
   ): Promise<{ tituloSugestao?: string | null }> {
@@ -201,7 +205,7 @@ export class CreateMindcardWithAiUseCase {
     this.logger.log(`AI generated ${aiResult.total} flashcards`);
 
     for (const flashcard of aiResult.flashcards) {
-      const card = new Card({
+      const itemMindcard = new ItemMindcard({
         titulo: flashcard.frente.substring(0, 255),
         tipo: TipoCard.ABERTA,
         dificuldade: this.mapDificuldade(flashcard.dificuldade),
@@ -211,8 +215,8 @@ export class CreateMindcardWithAiUseCase {
         mindcardId,
       });
 
-      await this.cardRepository.create(card);
-      createdCards.push(card);
+      await this.itemMindcardRepository.create(itemMindcard);
+      createdItems.push(itemMindcard);
     }
 
     return { tituloSugestao: aiResult.tituloSugestao };
@@ -224,7 +228,7 @@ export class CreateMindcardWithAiUseCase {
   private async generateQuiz(
     file: Express.Multer.File,
     mindcardId: string,
-    createdCards: Card[],
+    createdItems: ItemMindcard[],
     intervaloPaginas?: string,
     requestTitle = false,
   ): Promise<{ tituloSugestao?: string | null }> {
@@ -245,7 +249,7 @@ export class CreateMindcardWithAiUseCase {
         .map((opt) => `${opt.id}. ${opt.texto}`)
         .join('\n');
 
-      const card = new Card({
+      const itemMindcard = new ItemMindcard({
         titulo: question.pergunta.substring(0, 255),
         tipo: TipoCard.MULTIPLA_ESCOLHA,
         dificuldade: Dificuldade.MEDIO,
@@ -255,15 +259,15 @@ export class CreateMindcardWithAiUseCase {
         mindcardId,
       });
 
-      await this.cardRepository.create(card);
-      createdCards.push(card);
+      await this.itemMindcardRepository.create(itemMindcard);
+      createdItems.push(itemMindcard);
 
       // Create opcao_resposta entries for each option
       for (const opcao of question.opcoes) {
         const opcaoResposta = new OpcaoResposta({
           texto: opcao.texto,
           correta: opcao.id === question.respostaCorreta,
-          cardId: card.id,
+          itemMindcardId: itemMindcard.id,
         });
 
         await this.opcaoRespostaRepository.create(opcaoResposta);
@@ -274,7 +278,7 @@ export class CreateMindcardWithAiUseCase {
   }
 
   /**
-   * Map AI difficulty to Card entity difficulty
+   * Map AI difficulty to ItemMindcard entity difficulty
    */
   private mapDificuldade(aiDificuldade: string): Dificuldade {
     const map: Record<string, Dificuldade> = {

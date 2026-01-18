@@ -12,7 +12,7 @@ export enum Dificuldade {
   DIFICIL = 'DIFICIL',
 }
 
-export interface CardProps {
+export interface ItemMindcardProps {
   id?: string;
   titulo: string;
   tipo: TipoCard;
@@ -23,7 +23,7 @@ export interface CardProps {
   mindcardId: string;
 }
 
-export class Card {
+export class ItemMindcard {
   readonly id: string;
   titulo: string;
   tipo: TipoCard;
@@ -33,7 +33,7 @@ export class Card {
   alternativaTexto: string | null;
   readonly mindcardId: string;
 
-  constructor(props: CardProps) {
+  constructor(props: ItemMindcardProps) {
     this.id = props.id ?? randomUUID();
     this.titulo = props.titulo;
     this.tipo = props.tipo;

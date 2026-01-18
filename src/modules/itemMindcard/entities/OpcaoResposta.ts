@@ -4,19 +4,19 @@ export interface OpcaoRespostaProps {
   id?: string;
   texto: string;
   correta: boolean;
-  cardId: string;
+  itemMindcardId: string;
 }
 
 export class OpcaoResposta {
   readonly id: string;
   texto: string;
   correta: boolean;
-  readonly cardId: string;
+  readonly itemMindcardId: string;
 
   constructor(props: OpcaoRespostaProps) {
     this.id = props.id ?? randomUUID();
     this.texto = props.texto;
     this.correta = props.correta;
-    this.cardId = props.cardId;
+    this.itemMindcardId = props.itemMindcardId;
   }
 }

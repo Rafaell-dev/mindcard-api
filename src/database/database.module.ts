@@ -4,9 +4,9 @@ import { UserRepository } from 'src/modules/user/repositories/UserRepository';
 import { PrismaUserRepository } from './prisma/repositories/PrismaUserRepository';
 import { MindcardRepository } from 'src/modules/mindcard/repositories/MindcardRepository';
 import { PrismaMindcardRepository } from './prisma/repositories/PrismaMindcardRepository';
-import { CardRepository } from 'src/modules/card/repositories/CardRepository';
-import { PrismaCardRepository } from './prisma/repositories/PrismaCardRepository';
-import { OpcaoRespostaRepository } from 'src/modules/card/repositories/OpcaoRespostaRepository';
+import { ItemMindcardRepository } from 'src/modules/itemMindcard/repositories/ItemMindcardRepository';
+import { PrismaItemMindcardRepository } from './prisma/repositories/PrismaItemMindcardRepository';
+import { OpcaoRespostaRepository } from 'src/modules/itemMindcard/repositories/OpcaoRespostaRepository';
 import { PrismaOpcaoRespostaRepository } from './prisma/repositories/PrismaOpcaoRespostaRepository';
 import { FaculdadeRepository } from 'src/modules/faculdade/repositories/FaculdadeRepository';
 import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdadeRepository';
@@ -23,8 +23,8 @@ import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdade
       useClass: PrismaMindcardRepository,
     },
     {
-      provide: CardRepository,
-      useClass: PrismaCardRepository,
+      provide: ItemMindcardRepository,
+      useClass: PrismaItemMindcardRepository,
     },
     {
       provide: OpcaoRespostaRepository,
@@ -39,7 +39,7 @@ import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdade
     PrismaService,
     UserRepository,
     MindcardRepository,
-    CardRepository,
+    ItemMindcardRepository,
     OpcaoRespostaRepository,
     FaculdadeRepository,
   ],

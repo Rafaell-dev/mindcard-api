@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CardRepository } from '../../repositories/CardRepository';
-import { Card, TipoCard, Dificuldade, CardProps } from '../../entities/Card';
+import { ItemMindcardRepository } from '../../repositories/ItemMindcardRepository';
+import {
+  ItemMindcard,
+  TipoCard,
+  Dificuldade,
+  ItemMindcardProps,
+} from '../../entities/ItemMindcard';
 import { NotFoundException } from 'src/exceptions/NotFoundException';
 
-interface UpdateCardRequest {
+interface UpdateItemMindcardRequest {
   titulo?: string;
   tipo?: TipoCard;
   dificuldade?: Dificuldade;
@@ -13,17 +18,20 @@ interface UpdateCardRequest {
 }
 
 @Injectable()
-export class UpdateCardByIdUseCase {
-  constructor(private cardRepository: CardRepository) {}
+export class UpdateItemMindcardByIdUseCase {
+  constructor(private itemMindcardRepository: ItemMindcardRepository) {}
 
-  async execute(id: string, updateData: UpdateCardRequest): Promise<Card> {
-    const card = await this.cardRepository.findById(id);
+  async execute(
+    id: string,
+    updateData: UpdateItemMindcardRequest,
+  ): Promise<ItemMindcard> {
+    const itemMindcard = await this.itemMindcardRepository.findById(id);
 
-    if (!card) {
+    if (!itemMindcard) {
       throw new NotFoundException();
     }
 
-    const sanitizedData: Partial<CardProps> = {};
+    const sanitizedData: Partial<ItemMindcardProps> = {};
 
     if (updateData.titulo !== undefined) {
       sanitizedData.titulo = updateData.titulo;
@@ -44,12 +52,15 @@ export class UpdateCardByIdUseCase {
       sanitizedData.alternativaTexto = updateData.alternativaTexto;
     }
 
-    const updatedCard = await this.cardRepository.updateById(id, sanitizedData);
+    const updatedItemMindcard = await this.itemMindcardRepository.updateById(
+      id,
+      sanitizedData,
+    );
 
-    if (!updatedCard) {
+    if (!updatedItemMindcard) {
       throw new NotFoundException();
     }
 
-    return updatedCard;
+    return updatedItemMindcard;
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { OpcaoRespostaRepository } from 'src/modules/card/repositories/OpcaoRespostaRepository';
-import { OpcaoResposta } from 'src/modules/card/entities/OpcaoResposta';
+import { OpcaoRespostaRepository } from 'src/modules/itemMindcard/repositories/OpcaoRespostaRepository';
+import { OpcaoResposta } from 'src/modules/itemMindcard/entities/OpcaoResposta';
 import { PrismaOpcaoRespostaMapper } from '../mappers/PrismaOpcaoRespostaMapper';
 
 @Injectable()
@@ -28,9 +28,9 @@ export class PrismaOpcaoRespostaRepository implements OpcaoRespostaRepository {
     return PrismaOpcaoRespostaMapper.toDomain(opcaoResposta);
   }
 
-  async findByCardId(cardId: string): Promise<OpcaoResposta[]> {
+  async findByItemMindcardId(itemMindcardId: string): Promise<OpcaoResposta[]> {
     const opcoes = await this.prisma.opcao_resposta.findMany({
-      where: { card_id: cardId },
+      where: { item_mindcard_id: itemMindcardId },
     });
 
     return opcoes.map((opcao) => PrismaOpcaoRespostaMapper.toDomain(opcao));
@@ -42,9 +42,9 @@ export class PrismaOpcaoRespostaRepository implements OpcaoRespostaRepository {
     });
   }
 
-  async deleteByCardId(cardId: string): Promise<void> {
+  async deleteByItemMindcardId(itemMindcardId: string): Promise<void> {
     await this.prisma.opcao_resposta.deleteMany({
-      where: { card_id: cardId },
+      where: { item_mindcard_id: itemMindcardId },
     });
   }
 }

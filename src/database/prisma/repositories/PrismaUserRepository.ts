@@ -124,22 +124,22 @@ export class PrismaUserRepository implements UserRepository {
 
       const mindcardIds = mindcards.map((m) => m.id);
 
-      // 2. Buscar todos os cards dos mindcards
-      const cards = await tx.card.findMany({
+      // 2. Buscar todos os itens mindcard dos mindcards
+      const itensMindcard = await tx.item_mindcard.findMany({
         where: { mindcard_id: { in: mindcardIds } },
         select: { id: true },
       });
 
-      const cardIds = cards.map((c) => c.id);
+      const itemMindcardIds = itensMindcard.map((c) => c.id);
 
-      // 3. Deletar opções de resposta dos cards
+      // 3. Deletar opções de resposta dos itens
       await tx.opcao_resposta.deleteMany({
-        where: { card_id: { in: cardIds } },
+        where: { item_mindcard_id: { in: itemMindcardIds } },
       });
 
-      // 4. Deletar cards
-      await tx.card.deleteMany({
-        where: { id: { in: cardIds } },
+      // 4. Deletar itens mindcard
+      await tx.item_mindcard.deleteMany({
+        where: { id: { in: itemMindcardIds } },
       });
 
       // 5. Deletar práticas do usuário

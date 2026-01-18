@@ -51,9 +51,9 @@ model mindcard {
   intervalo_paginas    String?
   tipo_questoes        String?
 
-  usuario  usuario   @relation(fields: [usuario_id], references: [id])
-  cards    card[]
-  praticas pratica[]
+  usuario        usuario         @relation(fields: [usuario_id], references: [id])
+  itens_mindcard item_mindcard[]
+  praticas       pratica[]
 
   @@index([usuario_id])
   @@index([data_criacao])
@@ -61,7 +61,7 @@ model mindcard {
   @@index([job_id])
 }
 
-model card {
+model item_mindcard {
   id                String      @id @default(cuid())
   titulo            String
   tipo              tipo_card
@@ -80,14 +80,14 @@ model card {
 }
 
 model opcao_resposta {
-  id      String  @id @default(cuid())
-  texto   String
-  correta Boolean @default(false)
-  card_id String
+  id               String  @id @default(cuid())
+  texto            String
+  correta          Boolean @default(false)
+  item_mindcard_id String
 
-  card card @relation(fields: [card_id], references: [id])
+  item_mindcard item_mindcard @relation(fields: [item_mindcard_id], references: [id])
 
-  @@index([card_id])
+  @@index([item_mindcard_id])
 }
 
 model pratica {

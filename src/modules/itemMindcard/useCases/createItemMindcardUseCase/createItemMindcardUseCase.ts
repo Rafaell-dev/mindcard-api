@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CardRepository } from '../../repositories/CardRepository';
-import { Card, TipoCard, Dificuldade } from '../../entities/Card';
+import { ItemMindcardRepository } from '../../repositories/ItemMindcardRepository';
+import {
+  ItemMindcard,
+  TipoCard,
+  Dificuldade,
+} from '../../entities/ItemMindcard';
 
-interface CreateCardRequest {
+interface CreateItemMindcardRequest {
   titulo: string;
   tipo: TipoCard;
   dificuldade: Dificuldade;
@@ -13,8 +17,8 @@ interface CreateCardRequest {
 }
 
 @Injectable()
-export class CreateCardUseCase {
-  constructor(private cardRepository: CardRepository) {}
+export class CreateItemMindcardUseCase {
+  constructor(private itemMindcardRepository: ItemMindcardRepository) {}
 
   async execute({
     titulo,
@@ -24,8 +28,8 @@ export class CreateCardUseCase {
     respostaCorreta,
     alternativaTexto,
     mindcardId,
-  }: CreateCardRequest) {
-    const card = new Card({
+  }: CreateItemMindcardRequest) {
+    const itemMindcard = new ItemMindcard({
       titulo,
       tipo,
       dificuldade,
@@ -35,8 +39,8 @@ export class CreateCardUseCase {
       mindcardId,
     });
 
-    await this.cardRepository.create(card);
+    await this.itemMindcardRepository.create(itemMindcard);
 
-    return card;
+    return itemMindcard;
   }
 }

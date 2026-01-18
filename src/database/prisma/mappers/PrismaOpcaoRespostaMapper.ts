@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { OpcaoResposta } from 'src/modules/card/entities/OpcaoResposta';
+import { OpcaoResposta } from 'src/modules/itemMindcard/entities/OpcaoResposta';
 
 export class PrismaOpcaoRespostaMapper {
   static toPrisma(
@@ -9,9 +9,9 @@ export class PrismaOpcaoRespostaMapper {
       id: opcaoResposta.id,
       texto: opcaoResposta.texto,
       correta: opcaoResposta.correta,
-      card: {
+      item_mindcard: {
         connect: {
-          id: opcaoResposta.cardId,
+          id: opcaoResposta.itemMindcardId,
         },
       },
     };
@@ -21,13 +21,13 @@ export class PrismaOpcaoRespostaMapper {
     id: string;
     texto: string;
     correta: boolean;
-    card_id: string;
+    item_mindcard_id: string;
   }): OpcaoResposta {
     return new OpcaoResposta({
       id: raw.id,
       texto: raw.texto,
       correta: raw.correta,
-      cardId: raw.card_id,
+      itemMindcardId: raw.item_mindcard_id,
     });
   }
 }
