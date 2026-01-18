@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "73eedff6-a630-4c7f-a13e-89507b3383c3",
     "name": "MindCard API",
-    "description": "Collection completa da API MindCard - Plataforma educacional com geração de flashcards e quizzes por IA.\n\n## Recursos Principais\n\n- **Usuários**: Cadastro e gerenciamento de usuários\n- **Mindcards**: Criação de conjuntos de estudo com IA (Gemini)\n- **Cards**: Flashcards e questões de múltipla escolha\n\n## Variáveis de Ambiente\n\n- `baseUrl`: URL base da API (padrão: http://localhost:3002/api/v1)\n- `accessToken`: Token JWT do usuário autenticado\n- `mindcardId`: ID do mindcard atual\n- `cardId`: ID do card atual\n\n## Tecnologias\n\n- NestJS 11.0.1\n- Google Gemini AI (1.5-flash-latest)\n- Cloudflare R2 Storage\n- PostgreSQL + Prisma ORM",
+    "description": "Collection completa da API MindCard - Plataforma educacional com geração de flashcards e quizzes por IA.\n\n## Recursos Principais\n\n- **Usuários**: Cadastro e gerenciamento de usuários\n- **Mindcards**: Criação de conjuntos de estudo com IA (Gemini)\n- **Itens Mindcard**: Flashcards e questões de múltipla escolha\n\n## Variáveis de Ambiente\n\n- `baseUrl`: URL base da API (padrão: http://localhost:3002/api/v1)\n- `accessToken`: Token JWT do usuário autenticado\n- `mindcardId`: ID do mindcard atual\n- `itemMindcardId`: ID do item mindcard atual\n\n## Tecnologias\n\n- NestJS 11.0.1\n- Google Gemini AI (1.5-flash-latest)\n- Cloudflare R2 Storage\n- PostgreSQL + Prisma ORM",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "22635719"
   },
@@ -672,10 +672,10 @@
       "description": "Endpoints para gerenciamento de Mindcards.\n\nMindcards são conjuntos de estudo que contêm flashcards ou questões geradas automaticamente por IA a partir de documentos PDF ou imagens."
     },
     {
-      "name": "📇 Cards",
+      "name": "📇 Itens Mindcard",
       "item": [
         {
-          "name": "Criar Card Manual",
+          "name": "Criar Item Mindcard Manual",
           "event": [
             {
               "listen": "test",
@@ -683,8 +683,8 @@
                 "exec": [
                   "if (pm.response.code === 201 || pm.response.code === 200) {",
                   "    const response = pm.response.json();",
-                  "    pm.environment.set('cardId', response.id);",
-                  "    pm.test('Card criado com sucesso', () => {",
+                  "    pm.environment.set('itemMindcardId', response.id);",
+                  "    pm.test('Item Mindcard criado com sucesso', () => {",
                   "        pm.expect(response).to.have.property('id');",
                   "        pm.expect(response).to.have.property('titulo');",
                   "    });",
@@ -723,9 +723,9 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/card/criar",
+              "raw": "{{baseUrl}}/item-mindcard/criar",
               "host": ["{{baseUrl}}"],
-              "path": ["card", "criar"]
+              "path": ["item-mindcard", "criar"]
             },
             "description": "Cria um card manualmente (sem usar IA).\n\n**Tipos de Card:**\n- `ABERTA`: Pergunta com resposta dissertativa\n- `MULTIPLA_ESCOLHA`: Quiz com 4 alternativas\n- `ALTERNATIVA`: Verdadeiro/Falso\n\n**Níveis de Dificuldade:**\n- `FACIL`\n- `MEDIO`\n- `DIFICIL`\n\n**Campos obrigatórios:**\n- `titulo`: Título do card\n- `tipo`: Tipo de card (enum)\n- `dificuldade`: Nível (enum)\n- `pergunta`: Texto da pergunta\n- `mindcardId`: ID do mindcard pai\n\n**Campos para MULTIPLA_ESCOLHA:**\n- `respostaCorreta`: Letra da alternativa correta (A, B, C ou D)\n- `alternativaTexto`: Texto das 4 alternativas separadas por \\\\n\n**Campos para ABERTA:**\n- `respostaCorreta`: Resposta esperada\n\n**Exemplo - Quiz:**\n```json\n{\n  \"titulo\": \"Capital do Brasil\",\n  \"tipo\": \"MULTIPLA_ESCOLHA\",\n  \"dificuldade\": \"FACIL\",\n  \"pergunta\": \"Qual é a capital do Brasil?\",\n  \"respostaCorreta\": \"C\",\n  \"alternativaTexto\": \"A. São Paulo\\nB. Rio de Janeiro\\nC. Brasília\\nD. Salvador\",\n  \"mindcardId\": \"01JCQR...\"\n}\n```"
           },
@@ -750,9 +750,9 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/card/criar",
+                  "raw": "{{baseUrl}}/item-mindcard/criar",
                   "host": ["{{baseUrl}}"],
-                  "path": ["card", "criar"]
+                  "path": ["item-mindcard", "criar"]
                 }
               },
               "status": "Created",
@@ -807,7 +807,7 @@
           ]
         },
         {
-          "name": "Listar Card por ID",
+          "name": "Listar Item Mindcard por ID",
           "request": {
             "auth": {
               "type": "bearer",
@@ -822,23 +822,23 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/card/listar/:cardId",
+              "raw": "{{baseUrl}}/item-mindcard/listar/:itemMindcardId",
               "host": ["{{baseUrl}}"],
-              "path": ["card", "listar", ":cardId"],
+              "path": ["item-mindcard", "listar", ":itemMindcardId"],
               "variable": [
                 {
-                  "key": "cardId",
-                  "value": "{{cardId}}",
-                  "description": "ID do card"
+                  "key": "itemMindcardId",
+                  "value": "{{itemMindcardId}}",
+                  "description": "ID do item mindcard"
                 }
               ]
             },
-            "description": "Busca os dados de um card específico.\n\n**Parâmetros de rota:**\n- `cardId`: ID único do card"
+            "description": "Busca os dados de um item mindcard específico.\n\n**Parâmetros de rota:**\n- `itemMindcardId`: ID único do item mindcard"
           },
           "response": []
         },
         {
-          "name": "Listar Cards por Mindcard",
+          "name": "Listar Itens Mindcard por Mindcard",
           "request": {
             "auth": {
               "type": "bearer",
@@ -853,9 +853,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/card/listar_por_mindcard/:mindcardId",
+              "raw": "{{baseUrl}}/item-mindcard/listar_por_mindcard/:mindcardId",
               "host": ["{{baseUrl}}"],
-              "path": ["card", "listar_por_mindcard", ":mindcardId"],
+              "path": ["item-mindcard", "listar_por_mindcard", ":mindcardId"],
               "variable": [
                 {
                   "key": "mindcardId",
@@ -897,7 +897,7 @@
           ]
         },
         {
-          "name": "Atualizar Card",
+          "name": "Atualizar Item Mindcard",
           "request": {
             "auth": {
               "type": "bearer",
@@ -927,14 +927,14 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/card/atualizar/:cardId",
+              "raw": "{{baseUrl}}/item-mindcard/atualizar/:itemMindcardId",
               "host": ["{{baseUrl}}"],
-              "path": ["card", "atualizar", ":cardId"],
+              "path": ["item-mindcard", "atualizar", ":itemMindcardId"],
               "variable": [
                 {
-                  "key": "cardId",
-                  "value": "{{cardId}}",
-                  "description": "ID do card"
+                  "key": "itemMindcardId",
+                  "value": "{{itemMindcardId}}",
+                  "description": "ID do item mindcard"
                 }
               ]
             },
@@ -943,7 +943,7 @@
           "response": []
         },
         {
-          "name": "Deletar Card",
+          "name": "Deletar Item Mindcard",
           "request": {
             "auth": {
               "type": "bearer",
@@ -958,23 +958,23 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/card/deletar/:cardId",
+              "raw": "{{baseUrl}}/item-mindcard/deletar/:itemMindcardId",
               "host": ["{{baseUrl}}"],
-              "path": ["card", "deletar", ":cardId"],
+              "path": ["item-mindcard", "deletar", ":itemMindcardId"],
               "variable": [
                 {
-                  "key": "cardId",
-                  "value": "{{cardId}}",
-                  "description": "ID do card"
+                  "key": "itemMindcardId",
+                  "value": "{{itemMindcardId}}",
+                  "description": "ID do item mindcard"
                 }
               ]
             },
-            "description": "Remove um card do sistema.\n\n**Parâmetros de rota:**\n- `cardId`: ID do card\n\n**Resposta de sucesso:** 204 No Content"
+            "description": "Remove um item mindcard do sistema.\n\n**Parâmetros de rota:**\n- `itemMindcardId`: ID do item mindcard\n\n**Resposta de sucesso:** 204 No Content"
           },
           "response": []
         }
       ],
-      "description": "Endpoints para gerenciamento de Cards.\n\nCards podem ser flashcards (perguntas abertas) ou questões de múltipla escolha. Normalmente são gerados automaticamente pela IA ao criar um Mindcard, mas também podem ser criados manualmente."
+      "description": "Endpoints para gerenciamento de Itens Mindcard.\n\nItens Mindcard podem ser flashcards (perguntas abertas) ou questões de múltipla escolha. Normalmente são gerados automaticamente pela IA ao criar um Mindcard, mas também podem ser criados manualmente."
     },
     {
       "name": "🏫 Faculdades",
@@ -1050,7 +1050,7 @@
       "type": "string"
     },
     {
-      "key": "cardId",
+      "key": "itemMindcardId",
       "value": "",
       "type": "string"
     }
