@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:faculdades": "ts-node -r dotenv/config prisma/seeds/seed-faculdades.ts",
-    "seed:onboarding": "ts-node -r dotenv/config prisma/seeds/seed-onboarding.ts"
+    "seed:onboarding": "ts-node -r dotenv/config prisma/seeds/seed-onboarding.ts",
+    "seed:all": "npm run seed:faculdades && npm run seed:onboarding"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.928.0",
