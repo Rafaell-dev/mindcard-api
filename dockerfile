@@ -1,57 +1,62 @@
-# Stage 1: Dependencies
+# Stage 1: Install All Dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Copia apenas package files pra aproveitar cache do Docker
+# Install openssl (required for Prisma)
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 COPY prisma ./prisma/
+COPY prisma.config.ts ./
 
-# Instala TODAS as dependências (precisa das devDependencies pro build)
-RUN npm ci && \
-    npm cache clean --force
+# Install all dependencies (including devDependencies for build)
+RUN npm ci && npm cache clean --force
 
-# Gera Prisma Client
+# Generate Prisma Client
 RUN npx prisma generate
 
-# Stage 2: Build
+# Stage 2: Create Production Dependencies (Pruned)
+FROM deps AS prod-deps
+WORKDIR /app
+# Remove devDependencies
+RUN npm prune --production && npm cache clean --force
+
+# Stage 3: Build Application
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copia node_modules do stage anterior
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/prisma ./prisma
-
-# Copia código fonte
 COPY . .
 
-# Build da aplicação
 RUN npm run build
 
-# Stage 3: Production
+# Stage 4: Production Image
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Instala wget pro healthcheck (mais confiável)
-RUN apk add --no-cache wget
+# Install system dependencies (wget for healthcheck, openssl for Prisma)
+RUN apk add --no-cache wget openssl
 
-# Copia package files e instala APENAS produção
 COPY package*.json ./
-RUN npm ci --only=production && \
-    npm cache clean --force
+COPY prisma ./prisma/
+COPY prisma.config.ts ./
 
-# Copia Prisma schema e gera client novamente (importante!)
-COPY prisma ./prisma
-RUN npx prisma generate
+# Copy PRODUCTION node_modules from prod-deps stage
+COPY --from=prod-deps /app/node_modules ./node_modules
 
-# Copia arquivos buildados
+# Copy build artifacts
 COPY --from=builder /app/dist ./dist
 
-# Expõe a porta
+# Install prisma globally to allow migrations (lightweight)
+RUN npm install -g prisma
+
+# Expose port
 EXPOSE 3002
 
-# Health check melhorado
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
 
-# Comando de inicialização
+# Start command
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
