@@ -25,6 +25,7 @@ async function bootstrap() {
       '/admin/queues/(.*)',
       '/api-docs',
       '/api-docs/(.*)',
+      '/health',
     ],
   });
 

@@ -11,6 +11,7 @@ import { R2Module } from './r2/r2.module';
 import { GeminiModule } from './gemini/gemini.module';
 import { QueueModule } from './queue/queue.module';
 import { LoggerModule } from './logger/logger.module';
+import { HealthModule } from './health/health.module';
 import r2Config from './config/r2.config';
 import geminiConfig from './config/gemini.config';
 import redisConfig from './config/redis.config';
@@ -23,6 +24,7 @@ import { JwtAuthGuard } from './modules/auth/guards';
 @Module({
   imports: [
     LoggerModule,
+    HealthModule,
     DatabaseModule,
     UserModule,
     MindcardModule,
