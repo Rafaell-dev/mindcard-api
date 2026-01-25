@@ -15,8 +15,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new HttpLoggingInterceptor());
 
   app.enableCors({
-    origin: 'http://localhost:3000',
-    credentials: true,
+    origin: '*',
   });
 
   app.setGlobalPrefix('api/v1', {
