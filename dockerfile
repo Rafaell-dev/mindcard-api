@@ -48,14 +48,11 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 # Copy build artifacts
 COPY --from=builder /app/dist ./dist
 
-# Install prisma globally to allow migrations (lightweight)
-RUN npm install -g prisma
-
 # Expose port
 EXPOSE 3002
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=5 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
 
 # Start command
