@@ -10,6 +10,8 @@ import { OpcaoRespostaRepository } from 'src/modules/itemMindcard/repositories/O
 import { PrismaOpcaoRespostaRepository } from './prisma/repositories/PrismaOpcaoRespostaRepository';
 import { FaculdadeRepository } from 'src/modules/faculdade/repositories/FaculdadeRepository';
 import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdadeRepository';
+import { DeckRepository } from 'src/modules/deck/repositories/DeckRepository';
+import { PrismaDeckRepository } from './prisma/repositories/PrismaDeckRepository';
 
 @Module({
   providers: [
@@ -34,6 +36,10 @@ import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdade
       provide: FaculdadeRepository,
       useClass: PrismaFaculdadeRepository,
     },
+    {
+      provide: DeckRepository,
+      useClass: PrismaDeckRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -42,6 +48,7 @@ import { PrismaFaculdadeRepository } from './prisma/repositories/PrismaFaculdade
     ItemMindcardRepository,
     OpcaoRespostaRepository,
     FaculdadeRepository,
+    DeckRepository,
   ],
 })
 export class DatabaseModule {}

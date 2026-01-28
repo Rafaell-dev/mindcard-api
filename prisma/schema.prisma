@@ -205,3 +205,25 @@ enum TipoResposta {
   TEXTO_LIVRE
   DATA
 }
+
+model deck {
+  id           String      @id @default(cuid())
+  titulo       String
+  usuario_id   String
+  data_criacao DateTime    @default(now())
+
+  flashcard    flashcard[]
+
+  @@map("deck")
+}
+
+model flashcard {
+  id          String @id @default(cuid())
+  pergunta    String
+  resposta    String
+  deck_id     String
+
+  deck        deck   @relation(fields: [deck_id], references: [id], onDelete: Cascade)
+
+  @@index([deck_id])
+}
