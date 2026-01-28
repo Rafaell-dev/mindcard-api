@@ -4,6 +4,7 @@ import { UserModule } from './controllers/modules/user/user.module';
 import { MindcardModule } from './controllers/modules/mindcard/mindcard.module';
 import { ItemMindcardModule } from './controllers/modules/itemMindcard/itemMindcard.module';
 import { FaculdadeModule } from './modules/faculdade/faculdade.module';
+import { DeckModule } from './controllers/modules/deck/deck.module';
 import { AuthModule } from './modules/auth/authModule';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -30,6 +31,7 @@ import { JwtAuthGuard } from './modules/auth/guards';
     MindcardModule,
     ItemMindcardModule,
     FaculdadeModule,
+    DeckModule,
     AuthModule,
     OnboardingModule,
     ConfigModule.forRoot({
