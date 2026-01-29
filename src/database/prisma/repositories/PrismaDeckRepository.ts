@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Deck } from 'src/modules/deck/entities/deck';
-import { DeckRepository } from 'src/modules/deck/repositories/DeckRepository';
+import {
+  DeckRepository,
+  UpdateDeckData,
+} from 'src/modules/deck/repositories/DeckRepository';
 import { PrismaService } from '../prisma.service';
 import { PrismaDeckMapper } from '../mappers/PrismaDeckMapper';
 
@@ -48,5 +51,32 @@ export class PrismaDeckRepository implements DeckRepository {
     });
 
     return decks.map((deck) => PrismaDeckMapper.toDomain(deck));
+  }
+
+  async update(id: string, data: UpdateDeckData): Promise<Deck> {
+    const updated = await this.prisma.deck.update({
+      where: { id },
+      data: {
+        ...(data.titulo !== undefined && { titulo: data.titulo }),
+        ...(data.novosFlashcards &&
+          data.novosFlashcards.length > 0 && {
+            flashcard: {
+              create: data.novosFlashcards.map((fc) => ({
+                pergunta: fc.pergunta,
+                resposta: fc.resposta,
+              })),
+            },
+          }),
+      },
+      include: { flashcard: true },
+    });
+
+    return PrismaDeckMapper.toDomain(updated);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.deck.delete({
+      where: { id },
+    });
   }
 }
